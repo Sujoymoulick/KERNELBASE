@@ -151,12 +151,12 @@ export const DagVisualizer: React.FC = () => {
   };
 
   return (
-    <div id="interactive-dag-visualizer" className="my-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+    <div id="interactive-dag-visualizer" className="my-8 rounded-xl border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0D1118] overflow-hidden shadow-xs">
       {/* Visualizer header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] gap-3">
         <div className="flex items-center space-x-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 animate-ping shrink-0" />
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+          <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 dark:bg-[#70a5ff] animate-ping shrink-0" />
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-[#F5F7FA]">
             Live DAG Orchestrator & Loop
           </h4>
         </div>
@@ -166,7 +166,7 @@ export const DagVisualizer: React.FC = () => {
             id="dag-sim-step"
             onClick={handleNextStep}
             disabled={simStep >= 6}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-medium shadow-xs transition-colors min-h-[34px]"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-indigo-600 dark:bg-[#1d2b4a] hover:bg-indigo-700 dark:hover:bg-[#233558] disabled:opacity-50 text-white dark:text-[#70a5ff] text-xs font-medium border border-transparent dark:border-[#233558] shadow-xs transition-colors min-h-[34px]"
           >
             <Play className="h-3 w-3" />
             <span>{simStep >= 6 ? 'Completed' : 'Simulate Next Step'}</span>
@@ -174,7 +174,7 @@ export const DagVisualizer: React.FC = () => {
           <button
             id="dag-sim-reset"
             onClick={handleReset}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-md border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs transition-colors min-h-[34px]"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-md border border-slate-300 dark:border-[#1D2430] text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-100 dark:hover:bg-[#141C2B] text-xs transition-colors min-h-[34px]"
             title="Reset simulation"
           >
             <RotateCcw className="h-3 w-3" />
@@ -186,7 +186,7 @@ export const DagVisualizer: React.FC = () => {
       <div className="p-3.5 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
         {/* Node list representing DAG graph */}
         <div className="lg:col-span-7 space-y-3">
-          <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+          <div className="text-[11px] font-semibold text-slate-500 dark:text-[#707987] uppercase tracking-wider mb-2">
             Topological Dependency Nodes (Kahn's Sort Order)
           </div>
 
@@ -199,16 +199,16 @@ export const DagVisualizer: React.FC = () => {
                 onClick={() => setSelectedTask(task)}
                 className={`p-3 sm:p-3.5 rounded-lg border transition-all cursor-pointer relative ${
                   isSelected
-                    ? 'border-indigo-500 bg-indigo-50/40 dark:bg-indigo-950/20 ring-1 ring-indigo-500'
-                    : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
+                    ? 'border-indigo-500 dark:border-[#70a5ff] bg-indigo-50/40 dark:bg-[#172033] ring-1 ring-indigo-500 dark:ring-[#70a5ff]'
+                    : 'border-slate-200 dark:border-[#1D2430] bg-slate-50/50 dark:bg-[#090C12] hover:border-slate-300 dark:hover:border-[#233558]'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 shrink-0">
+                    <span className="text-xs font-mono font-bold text-slate-700 dark:text-[#A7AFBD] shrink-0">
                       Node {index + 1}:
                     </span>
-                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                    <span className="text-xs font-semibold text-slate-900 dark:text-[#F5F7FA]">
                       {task.title}
                     </span>
                   </div>
@@ -217,8 +217,8 @@ export const DagVisualizer: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-500 dark:text-slate-400 mt-2">
-                  <span className="font-mono text-indigo-600 dark:text-indigo-400">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-500 dark:text-[#707987] mt-2">
+                  <span className="font-mono text-indigo-600 dark:text-[#70a5ff]">
                     Agent: {task.agent}
                   </span>
                   <span>
@@ -233,47 +233,47 @@ export const DagVisualizer: React.FC = () => {
         </div>
 
         {/* Selected Node Details & Live Telemetry */}
-        <div className="lg:col-span-5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 p-4 flex flex-col justify-between">
+        <div className="lg:col-span-5 rounded-lg border border-slate-200 dark:border-[#1D2430] bg-slate-50/70 dark:bg-[#0B0D11] p-4 flex flex-col justify-between">
           <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center justify-between">
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#707987] mb-3 flex items-center justify-between">
               <span>Task Inspector</span>
-              <span className="font-mono text-[10px] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">
+              <span className="font-mono text-[10px] bg-slate-200 dark:bg-[#172033] px-1.5 py-0.5 rounded text-slate-700 dark:text-[#70a5ff]">
                 {selectedTask.id}
               </span>
             </div>
 
             <div className="space-y-3 text-xs">
               <div>
-                <span className="text-slate-500 block text-[11px]">Assigned Persona</span>
-                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                <span className="text-slate-500 dark:text-[#707987] block text-[11px]">Assigned Persona</span>
+                <span className="font-semibold text-slate-900 dark:text-[#F5F7FA]">
                   {selectedTask.agent}
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-500 block text-[11px]">Execution Status</span>
+                <span className="text-slate-500 dark:text-[#707987] block text-[11px]">Execution Status</span>
                 <div className="mt-1">{getStatusBadge(selectedTask.status)}</div>
               </div>
 
               <div>
-                <span className="text-slate-500 block text-[11px]">Live Output / Action</span>
-                <p className="mt-1 p-2 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-mono text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+                <span className="text-slate-500 dark:text-[#707987] block text-[11px]">Live Output / Action</span>
+                <p className="mt-1 p-2 rounded bg-white dark:bg-[#08090B] border border-slate-200 dark:border-[#1D2430] font-mono text-[11px] text-slate-700 dark:text-[#F5F7FA] leading-relaxed">
                   {selectedTask.output}
                 </p>
               </div>
 
               <div>
-                <span className="text-slate-500 block text-[11px]">Inference Cost</span>
-                <span className="font-mono text-slate-800 dark:text-slate-200">
+                <span className="text-slate-500 dark:text-[#707987] block text-[11px]">Inference Cost</span>
+                <span className="font-mono text-slate-800 dark:text-[#A7AFBD]">
                   {selectedTask.tokens} tokens (~{(selectedTask.tokens * 0.000001).toFixed(4)} credits)
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px]">
-            <span className="text-slate-500">Total Run Tokens:</span>
-            <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+          <div className="mt-4 pt-3 border-t border-slate-200 dark:border-[#1D2430] flex items-center justify-between text-[11px]">
+            <span className="text-slate-500 dark:text-[#707987]">Total Run Tokens:</span>
+            <span className="font-mono font-bold text-indigo-600 dark:text-[#70a5ff]">
               {totalTokens.toLocaleString()} tokens
             </span>
           </div>

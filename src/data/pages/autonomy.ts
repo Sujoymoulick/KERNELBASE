@@ -22,13 +22,13 @@ export const autonomyPages: DocPage[] = [
     Sched --> Exec[3. Coding Agent Implements]
     Exec --> Test[4. QA Executes Tests in Sandbox]
     Test --> Verdict{Tests Pass?}
-    Verdict -- Yes --> Review[5. Reviewer & Security Audit]
-    Review -- Approved --> Merge([Ready for Human Merge])
-    Verdict -- No --> Diag[6. Failure Diagnosis Agent]
+    Verdict -->|Yes| Review[5. Reviewer & Security Audit]
+    Review -->|Approved| Merge([Ready for Human Merge])
+    Verdict -->|No| Diag[6. Failure Diagnosis Agent]
     Diag --> Repair[7. Automatic Repair Patch]
     Repair --> Retest{Retry Limit Exceeded?}
-    Retest -- Under Limit --> Test
-    Retest -- Over Limit --> Escalate([Escalate to Human])`,
+    Retest -->|Under Limit| Test
+    Retest -->|Over Limit| Escalate([Escalate to Human])`,
           diagramTitle: 'Autonomous Execution & Repair Loop',
         },
       ],

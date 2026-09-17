@@ -55,8 +55,8 @@ export const getStartedPages: DocPage[] = [
     C --> SB[(Docker Sandbox)]
     QA --> SB
     SB --> Verif{Test Verification}
-    Verif -- Pass --> Report[PR & Summary Report]
-    Verif -- Fail --> Repair[Repair Diagnostic Loop]
+    Verif -->|Pass| Report[PR & Summary Report]
+    Verif -->|Fail| Repair[Repair Diagnostic Loop]
     Repair --> C`,
           diagramTitle: 'End-to-End Multi-Agent Orchestration Flow',
         },

@@ -45,11 +45,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       } catch (_) {}
     }
 
-    notifyThemeChange();
-
-    window.dispatchEvent(
-      new CustomEvent('app-theme-change', { detail: { isDark: dark } })
-    );
+    // Defer side-effects that trigger setState in other components (e.g.
+    // ArchitectureDiagram, MermaidDiagram) until after React finishes
+    // committing. Firing synchronously causes:
+    //   "Cannot update a component (ArchitectureDiagram) while rendering
+    //    a different component (ThemeProvider)"
+    setTimeout(() => {
+      notifyThemeChange();
+      window.dispatchEvent(
+        new CustomEvent('app-theme-change', { detail: { isDark: dark } })
+      );
+    }, 0);
   }, []);
 
   // Ensure initial state is accurately stamped on <html>

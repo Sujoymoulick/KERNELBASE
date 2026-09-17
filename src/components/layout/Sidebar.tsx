@@ -65,7 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed = false,
   onOpenSearch,
 }) => {
-  // All sections open by default
+  const [filterQuery, setFilterQuery] = useState('');
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     'get-started': true,
     'architecture': true,
@@ -96,44 +96,76 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const sidebarContent = (
-    <div className="h-full flex flex-col justify-between py-4 sm:py-5 px-3 text-xs overflow-y-auto overscroll-contain">
-      <div className="space-y-4 sm:space-y-5">
+    <div className="h-full flex flex-col justify-between py-3.5 px-3 text-xs overflow-y-auto overscroll-contain bg-white dark:bg-[#0B0D11] text-slate-800 dark:text-[#A7AFBD]">
+      <div className="space-y-4">
+        {/* Reference Image "Filter sidebar..." input with check icon and / badge */}
+        <div className="relative mb-2">
+          <div className="flex items-center bg-slate-50 dark:bg-[#101624] border border-slate-200 dark:border-[#1D2430] rounded-md px-2.5 py-1.5 text-xs focus-within:border-slate-400 dark:focus-within:border-[#273248]">
+            <svg className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <input
+              type="text"
+              value={filterQuery}
+              onChange={(e) => setFilterQuery(e.target.value)}
+              placeholder="Filter sidebar..."
+              className="w-full bg-transparent text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#707987] focus:outline-none text-xs pr-4"
+            />
+            <kbd className="font-mono text-[10px] bg-white dark:bg-[#172033] text-slate-500 dark:text-[#A7AFBD] px-1.5 py-0.2 rounded border border-slate-200 dark:border-[#273248] shrink-0 pointer-events-none">
+              /
+            </kbd>
+          </div>
+        </div>
+
         {NAVIGATION_SECTIONS.map((section: NavSection) => {
           const IconComponent = SECTION_ICONS[section.id] || LayoutGrid;
-          const isOpen = openSections[section.id] !== false;
+          const isOpen = openSections[section.id] !== false || filterQuery.trim().length > 0;
           
           const hasActiveChild = section.items.some((cat: NavCategory) =>
             cat.items.some((item: NavItem) => item.slug === currentSlug)
           );
+
+          // Filter items by search query if present
+          const filteredCategories = section.items.map((cat: NavCategory) => ({
+            ...cat,
+            items: cat.items.filter((item: NavItem) =>
+              item.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
+              section.title.toLowerCase().includes(filterQuery.toLowerCase())
+            )
+          })).filter((cat) => cat.items.length > 0);
+
+          if (filterQuery.trim().length > 0 && filteredCategories.length === 0) {
+            return null;
+          }
 
           return (
             <div key={section.id} id={`nav-section-${section.id}`} className="space-y-1">
               <button
                 id={`toggle-section-${section.id}`}
                 onClick={() => toggleSection(section.id)}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold rounded-md transition-colors text-left min-h-[34px] ${
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold rounded-md transition-colors text-left min-h-[32px] ${
                   hasActiveChild
-                    ? 'text-indigo-600 dark:text-indigo-400 font-bold'
-                    : 'text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-850'
+                    ? 'text-slate-900 dark:text-white font-bold'
+                    : 'text-slate-600 dark:text-[#707987] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#101624]/60'
                 }`}
               >
                 <div className="flex items-center space-x-2 truncate">
-                  <IconComponent className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">{section.title}</span>
+                  <IconComponent className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0" />
+                  <span className="truncate uppercase tracking-wider text-[11px] font-semibold">{section.title}</span>
                 </div>
                 {isOpen ? (
-                  <ChevronDown className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                  <ChevronDown className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0" />
                 ) : (
-                  <ChevronRight className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                  <ChevronRight className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0" />
                 )}
               </button>
 
               {isOpen && (
-                <div className="pl-3 ml-2 border-l border-slate-200 dark:border-slate-800 space-y-3 mt-1">
-                  {section.items.map((cat: NavCategory, catIdx: number) => (
+                <div className="pl-2 ml-1 border-l border-slate-200 dark:border-[#1D2430] space-y-2.5 mt-1">
+                  {filteredCategories.map((cat: NavCategory, catIdx: number) => (
                     <div key={catIdx} className="space-y-0.5">
                       {cat.title && (
-                        <div className="px-2 pt-1 pb-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        <div className="px-2 pt-1 pb-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-[#707987] font-mono">
                           {cat.title}
                         </div>
                       )}
@@ -144,15 +176,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             key={item.slug}
                             id={`nav-item-${item.slug.replace(/\//g, '-')}`}
                             onClick={() => handleNavClick(item.slug)}
-                            className={`w-full text-left px-2.5 py-2 sm:py-1.5 rounded-md text-[11px] transition-colors flex items-center justify-between group min-h-[34px] ${
+                            className={`w-full text-left px-3 py-1.5 rounded-md text-[11px] transition-colors flex items-center justify-between group min-h-[30px] ${
                               isActive
-                                ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/60 dark:hover:bg-slate-850/60'
+                                ? 'bg-indigo-50 dark:bg-[#19253e] text-indigo-700 dark:text-[#F5F7FA] font-medium shadow-2xs'
+                                : 'text-slate-600 dark:text-[#A7AFBD] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#101624]/60'
                             }`}
                           >
                             <span className="truncate">{item.title}</span>
                             {item.badge && (
-                              <span className="text-[9px] uppercase font-mono px-1 py-0.2 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 ml-1 shrink-0">
+                              <span className="text-[9px] uppercase font-mono px-1.5 py-0.2 rounded bg-indigo-100 dark:bg-[#172033] text-indigo-700 dark:text-[#70a5ff] border border-indigo-200 dark:border-[#233558] ml-1 shrink-0">
                                 {item.badge}
                               </span>
                             )}
@@ -169,13 +201,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Sidebar Footer */}
-      <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800 px-2 space-y-2 text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="mt-8 pt-4 border-t border-slate-200 dark:border-[#1D2430] px-2 space-y-1.5 text-[11px] text-slate-500 dark:text-[#707987]">
         <div className="flex items-center justify-between">
-          <span>Documentation Engine</span>
-          <span className="font-mono text-[10px]">v0.1.0</span>
+          <span>AI-Native Platform</span>
+          <span className="font-mono text-[10px] text-orange-500 dark:text-[#f38020]">v0.1.0</span>
         </div>
-        <p className="text-[10px] text-slate-400">
-          Open Source AI Developer Environment
+        <p className="text-[10px] text-slate-400 dark:text-[#707987]">
+          Kernel Base Documentation
         </p>
       </div>
     </div>
@@ -185,7 +217,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Desktop & Tablet Sticky Left Sidebar */}
       {!isCollapsed && (
-        <aside className="hidden md:block w-64 lg:w-72 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] sticky top-14 sm:top-16 transition-all">
+        <aside className="hidden md:block w-64 lg:w-72 shrink-0 border-r border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0B0D11] h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] sticky top-14 sm:top-16 transition-all">
           {sidebarContent}
         </aside>
       )}

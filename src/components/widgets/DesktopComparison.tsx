@@ -123,23 +123,23 @@ export const DesktopComparison: React.FC = () => {
   const [selectedFw, setSelectedFw] = useState<FrameworkData>(FRAMEWORKS[0]);
 
   return (
-    <div id="desktop-comparison-widget" className="my-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
-      <div className="p-3.5 sm:p-5 bg-slate-50 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div id="desktop-comparison-widget" className="my-8 rounded-xl border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0D1118] overflow-hidden shadow-xs">
+      <div className="p-3.5 sm:p-5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-[#F5F7FA]">
             Desktop Runtime Frameworks Evaluation
           </h4>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <p className="text-[11px] text-slate-500 dark:text-[#A7AFBD] mt-0.5">
             Evaluated for an AI-Native IDE with PTY terminal, Monaco Editor, and Docker.
           </p>
         </div>
-        <span className="text-[11px] font-mono bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-md self-start sm:self-auto shrink-0">
+        <span className="text-[11px] font-mono bg-indigo-50 dark:bg-[#172033] text-indigo-700 dark:text-[#70a5ff] border border-indigo-200 dark:border-[#233558] px-2.5 py-1 rounded-md self-start sm:self-auto shrink-0">
           Checked: September 2026
         </span>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-900/50 text-xs overflow-x-auto scrollbar-none">
+      <div className="flex border-b border-slate-200 dark:border-[#1D2430] bg-slate-100/50 dark:bg-[#090C12] text-xs overflow-x-auto scrollbar-none">
         {FRAMEWORKS.map((fw) => (
           <button
             key={fw.id}
@@ -147,8 +147,8 @@ export const DesktopComparison: React.FC = () => {
             onClick={() => setSelectedFw(fw)}
             className={`px-3.5 sm:px-4 py-2.5 font-medium whitespace-nowrap transition-colors border-b-2 flex items-center space-x-2 shrink-0 ${
               selectedFw.id === fw.id
-                ? 'border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-slate-900'
-                : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'border-indigo-600 dark:border-[#70a5ff] text-indigo-600 dark:text-[#70a5ff] bg-white dark:bg-[#0D1118]'
+                : 'border-transparent text-slate-600 dark:text-[#A7AFBD] hover:text-slate-900 dark:hover:text-[#F5F7FA]'
             }`}
           >
             <span>{fw.name}</span>
@@ -156,8 +156,8 @@ export const DesktopComparison: React.FC = () => {
               fw.recommendation === 'MVP Recommended'
                 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
                 : fw.recommendation === 'Production v1.0 Target'
-                ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
-                : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                ? 'bg-blue-100 text-blue-800 dark:bg-[#172033] dark:text-[#70a5ff] dark:border dark:border-[#233558]'
+                : 'bg-slate-200 text-slate-700 dark:bg-[#101624] dark:text-[#A7AFBD]'
             }`}>
               {fw.recommendation}
             </span>
@@ -169,15 +169,15 @@ export const DesktopComparison: React.FC = () => {
       <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6">
         <div className="md:col-span-7 space-y-4 text-xs">
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-              <span className="text-slate-500 block text-[11px]">Idle RAM Consumption</span>
-              <span className="font-mono font-bold text-slate-800 dark:text-slate-200 text-sm">
+            <div className="p-3 rounded-lg border border-slate-200 dark:border-[#1D2430] bg-slate-50/50 dark:bg-[#090C12]">
+              <span className="text-slate-500 dark:text-[#707987] block text-[11px]">Idle RAM Consumption</span>
+              <span className="font-mono font-bold text-slate-800 dark:text-[#F5F7FA] text-sm">
                 {selectedFw.ramUsage}
               </span>
             </div>
-            <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
-              <span className="text-slate-500 block text-[11px]">Compiled Package Size</span>
-              <span className="font-mono font-bold text-slate-800 dark:text-slate-200 text-sm">
+            <div className="p-3 rounded-lg border border-slate-200 dark:border-[#1D2430] bg-slate-50/50 dark:bg-[#090C12]">
+              <span className="text-slate-500 dark:text-[#707987] block text-[11px]">Compiled Package Size</span>
+              <span className="font-mono font-bold text-slate-800 dark:text-[#F5F7FA] text-sm">
                 {selectedFw.binarySize}
               </span>
             </div>
@@ -185,42 +185,42 @@ export const DesktopComparison: React.FC = () => {
 
           <div className="space-y-2">
             <div>
-              <span className="font-semibold text-slate-700 dark:text-slate-300 block">
+              <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block">
                 Node.js & Native Ecosystem Interop:
               </span>
-              <p className="text-slate-600 dark:text-slate-400 mt-0.5">
+              <p className="text-slate-600 dark:text-[#A7AFBD] mt-0.5">
                 {selectedFw.nodeSupport}
               </p>
             </div>
 
             <div>
-              <span className="font-semibold text-slate-700 dark:text-slate-300 block">
+              <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block">
                 Terminal (PTY) & xterm.js Support:
               </span>
-              <p className="text-slate-600 dark:text-slate-400 mt-0.5">
+              <p className="text-slate-600 dark:text-[#A7AFBD] mt-0.5">
                 {selectedFw.ptyTerminalSupport}
               </p>
             </div>
 
             <div>
-              <span className="font-semibold text-slate-700 dark:text-slate-300 block">
+              <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block">
                 Docker Engine Interoperability:
               </span>
-              <p className="text-slate-600 dark:text-slate-400 mt-0.5">
+              <p className="text-slate-600 dark:text-[#A7AFBD] mt-0.5">
                 {selectedFw.dockerSupport}
               </p>
             </div>
           </div>
 
-          <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+          <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-[#1D2430]">
             <div>
-              <span className="text-slate-500 text-[11px] block">Student Developer Accessibility</span>
-              <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">
+              <span className="text-slate-500 dark:text-[#707987] text-[11px] block">Student Developer Accessibility</span>
+              <span className="font-mono font-semibold text-indigo-600 dark:text-[#70a5ff]">
                 {selectedFw.studentEaseScore} / 10 Ease Score
               </span>
             </div>
             <div>
-              <span className="text-slate-500 text-[11px] block">Security Isolation Rating</span>
+              <span className="text-slate-500 dark:text-[#707987] text-[11px] block">Security Isolation Rating</span>
               <span className="font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                 {selectedFw.securityScore} / 10 Security Score
               </span>
@@ -235,7 +235,7 @@ export const DesktopComparison: React.FC = () => {
               <Check className="h-4 w-4" />
               <span>Architectural Strengths</span>
             </span>
-            <ul className="space-y-1 text-slate-700 dark:text-slate-300 list-disc list-inside">
+            <ul className="space-y-1 text-slate-700 dark:text-[#A7AFBD] list-disc list-inside">
               {selectedFw.strengths.map((s, i) => (
                 <li key={i}>{s}</li>
               ))}
@@ -247,7 +247,7 @@ export const DesktopComparison: React.FC = () => {
               <AlertTriangle className="h-4 w-4" />
               <span>Tradeoffs & Limitations</span>
             </span>
-            <ul className="space-y-1 text-slate-700 dark:text-slate-300 list-disc list-inside">
+            <ul className="space-y-1 text-slate-700 dark:text-[#A7AFBD] list-disc list-inside">
               {selectedFw.weaknesses.map((w, i) => (
                 <li key={i}>{w}</li>
               ))}

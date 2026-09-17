@@ -220,10 +220,10 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
   return (
     <div
       id={id}
-      className="my-5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-950 dark:bg-slate-900/90 text-slate-100 overflow-hidden shadow-xs group"
+      className="my-5 rounded-lg border border-slate-200 dark:border-[#1D2430] bg-slate-950 dark:bg-[#0D1118] text-slate-100 overflow-hidden shadow-xs group"
     >
       {/* Top Header Bar with File/Context info on left, and Language Badge + Copy on top-right */}
-      <div className="flex items-center justify-between px-3.5 py-2 bg-slate-900/90 dark:bg-slate-950/80 border-b border-slate-800/80 text-xs font-mono">
+      <div className="flex items-center justify-between px-3.5 py-2 bg-slate-900/90 dark:bg-[#0B0D11] border-b border-slate-800/80 dark:border-[#1D2430] text-xs font-mono">
         {/* Left Side: Window controls + File name or context icon */}
         <div className="flex items-center space-x-2.5 truncate min-w-0 pr-2">
           <div className="flex items-center space-x-1.5 shrink-0" aria-hidden="true">

@@ -1,6 +1,6 @@
 {
-  "name": "AI-Native Multi-Agent IDE — Architecture & Docs",
-  "description": "Production research, architecture specifications, multi-agent orchestration, and implementation documentation for an AI-Native IDE.",
+  "name": "Kernel Base Docs — Multi-Agent IDE Architecture",
+  "description": "Production research, architecture specifications, multi-agent orchestration, and implementation documentation for Kernel Base.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

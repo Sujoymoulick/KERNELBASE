@@ -170,42 +170,42 @@ export const MvpTracker: React.FC = () => {
   };
 
   return (
-    <div id="mvp-tracker-widget" className="my-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+    <div id="mvp-tracker-widget" className="my-8 rounded-xl border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0D1118] overflow-hidden shadow-xs">
       {/* Tracker Header */}
-      <div className="p-3.5 sm:p-5 bg-slate-50 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800">
+      <div className="p-3.5 sm:p-5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
           <div className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4 text-indigo-500 shrink-0" />
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+            <Calendar className="h-4 w-4 text-indigo-500 dark:text-[#70a5ff] shrink-0" />
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-[#F5F7FA]">
               10-Day Production MVP Sprint Tracker
             </h4>
           </div>
           <div className="flex items-center space-x-2 text-xs self-start sm:self-auto">
-            <span className="text-slate-500 dark:text-slate-400">Sprint Progress:</span>
-            <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+            <span className="text-slate-500 dark:text-[#707987]">Sprint Progress:</span>
+            <span className="font-mono font-bold text-indigo-600 dark:text-[#70a5ff]">
               {completedCount} / {days.length} Days ({progressPercent}%)
             </span>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-slate-200 dark:bg-[#1D2430] rounded-full h-2 overflow-hidden">
           <div
-            className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+            className="bg-indigo-600 dark:bg-[#70a5ff] h-2 rounded-full transition-all duration-500"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
       </div>
 
       {/* Accordion List */}
-      <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
+      <div className="divide-y divide-slate-100 dark:divide-[#1D2430]">
         {days.map((milestone) => {
           const isExpanded = expandedDay === milestone.day;
           return (
             <div
               key={milestone.day}
               id={`mvp-day-${milestone.day}`}
-              className="transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-900/30"
+              className="transition-colors hover:bg-slate-50/50 dark:hover:bg-[#141C2B]"
             >
               <div
                 onClick={() => setExpandedDay(isExpanded ? 0 : milestone.day)}
@@ -215,20 +215,20 @@ export const MvpTracker: React.FC = () => {
                   <button
                     id={`toggle-day-${milestone.day}`}
                     onClick={(e) => toggleComplete(milestone.day, e)}
-                    className="shrink-0 p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 focus:outline-none min-h-[30px] min-w-[30px] flex items-center justify-center"
+                    className="shrink-0 p-1 rounded hover:bg-slate-200 dark:hover:bg-[#172033] text-slate-400 focus:outline-none min-h-[30px] min-w-[30px] flex items-center justify-center"
                     title={milestone.completed ? 'Mark as incomplete' : 'Mark as completed'}
                   >
                     {milestone.completed ? (
                       <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                     ) : (
-                      <Clock className="h-4 w-4 text-slate-400" />
+                      <Clock className="h-4 w-4 text-slate-400 dark:text-[#707987]" />
                     )}
                   </button>
                   <div className="truncate">
-                    <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                    <span className="text-xs font-semibold text-slate-900 dark:text-[#F5F7FA]">
                       {milestone.title}
                     </span>
-                    <span className="hidden md:inline-block text-[11px] text-slate-500 dark:text-slate-400 ml-2">
+                    <span className="hidden md:inline-block text-[11px] text-slate-500 dark:text-[#A7AFBD] ml-2">
                       — {milestone.focus}
                     </span>
                   </div>
@@ -238,27 +238,27 @@ export const MvpTracker: React.FC = () => {
                   <span
                     className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                       milestone.completed
-                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
-                        : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-transparent dark:border-emerald-800/40'
+                        : 'bg-slate-100 text-slate-600 dark:bg-[#101624] dark:text-[#A7AFBD] border border-transparent dark:border-[#1D2430]'
                     }`}
                   >
                     {milestone.completed ? 'VERIFIED' : 'IN PROGRESS'}
                   </span>
                   {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-slate-400" />
+                    <ChevronDown className="h-4 w-4 text-slate-400 dark:text-[#707987]" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-slate-400" />
+                    <ChevronRight className="h-4 w-4 text-slate-400 dark:text-[#707987]" />
                   )}
                 </div>
               </div>
 
               {isExpanded && (
-                <div className="px-3.5 sm:px-5 pb-4 sm:pb-5 pt-1 space-y-3 bg-slate-50/50 dark:bg-slate-950/30 text-xs">
+                <div className="px-3.5 sm:px-5 pb-4 sm:pb-5 pt-1 space-y-3 bg-slate-50/50 dark:bg-[#090C12] text-xs border-t border-slate-100 dark:border-[#1D2430]">
                   <div>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                    <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block mb-1">
                       Deliverables:
                     </span>
-                    <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400">
+                    <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-[#A7AFBD]">
                       {milestone.deliverables.map((del, i) => (
                         <li key={i}>{del}</li>
                       ))}
@@ -266,12 +266,12 @@ export const MvpTracker: React.FC = () => {
                   </div>
 
                   <div>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
+                    <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block mb-1">
                       Verification Test Command:
                     </span>
-                    <div className="flex items-center justify-between p-2 rounded bg-slate-900 text-slate-200 font-mono text-[11px]">
+                    <div className="flex items-center justify-between p-2 rounded bg-slate-900 dark:bg-[#08090B] border border-slate-800 dark:border-[#1D2430] text-slate-200 dark:text-[#F5F7FA] font-mono text-[11px]">
                       <div className="flex items-center space-x-2 truncate">
-                        <Terminal className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                        <Terminal className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0" />
                         <span className="truncate">{milestone.testCommand}</span>
                       </div>
                       <button
@@ -289,10 +289,10 @@ export const MvpTracker: React.FC = () => {
                   </div>
 
                   <div>
-                    <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-0.5">
+                    <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block mb-0.5">
                       Acceptance Standard:
                     </span>
-                    <p className="text-slate-600 dark:text-slate-400">
+                    <p className="text-slate-600 dark:text-[#A7AFBD]">
                       {milestone.verificationCriteria}
                     </p>
                   </div>

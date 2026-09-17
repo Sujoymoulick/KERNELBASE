@@ -191,12 +191,12 @@ export interface RunInstance {
     Comp --> Ctx[Context Window Pruner]
     Ctx --> Model{Model Gateway}
     Model --> Decision{Tool Call or Result?}
-    Decision -- Tool Call --> Disp[Tool Dispatcher & MCP]
+    Decision -->|Tool Call| Disp[Tool Dispatcher & MCP]
     Disp --> Exec[Execution in Sandbox]
     Exec --> Ctx
-    Decision -- Output --> Refl[Self-Verification Reflection]
-    Refl -- Verified --> Res([AgentResult Output])
-    Refl -- Needs Edit --> Comp`,
+    Decision -->|Output| Refl[Self-Verification Reflection]
+    Refl -->|Verified| Res([AgentResult Output])
+    Refl -->|Needs Edit| Comp`,
           diagramTitle: 'Agent Internal Loop',
         },
         {
@@ -584,8 +584,8 @@ export interface RunInstance {
     Mount --> Agent[Coding & QA Agents]
     Agent -->|Edits & Tests| WT
     WT --> Review{User Approves Diff?}
-    Review -- Yes --> Merge[Fast-Forward Git Merge to main]
-    Review -- No --> Discard[Delete Worktree & Prune Branch]`,
+    Review -->|Yes| Merge[Fast-Forward Git Merge to main]
+    Review -->|No| Discard[Delete Worktree & Prune Branch]`,
           diagramTitle: 'Git Worktree Separation',
         },
       ],

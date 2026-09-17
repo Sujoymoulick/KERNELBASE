@@ -29,7 +29,7 @@ export function configureMermaid(isDark: boolean): void {
     mermaid.initialize({
       startOnLoad: false,
       suppressErrorRendering: true,
-      securityLevel: 'loose',
+      securityLevel: 'antiscript',
       theme: isDark ? 'dark' : 'neutral',
       fontFamily: 'Plus Jakarta Sans, system-ui, -apple-system, sans-serif',
       themeVariables: {
@@ -116,16 +116,29 @@ export function renderMermaidDiagram(
   const currentVersion = globalThemeVersion;
 
   return new Promise((resolve, reject) => {
+    // Ensure queue always continues even if previous item failed
     renderQueue = renderQueue
+      .catch(() => {
+        // Recover from any previous queue rejection
+      })
       .then(async () => {
-        // Generate unique DOM ID for this render pass
-        const uniqueId = `${idPrefix}-${Math.random().toString(36).substring(2, 9)}-${Date.now()}`;
+        // Sanitize prefix to ensure a valid CSS/DOM identifier starting with a letter
+        const cleanPrefix = idPrefix.replace(/[^a-zA-Z0-9_]/g, '_');
+        const uniqueId = `m_${cleanPrefix}_${Math.random().toString(36).substring(2, 9)}_${Date.now()}`;
 
         try {
           cleanupMermaidDOMErrors();
           configureMermaid(isDark);
 
-          const { svg } = await mermaid.render(uniqueId, chart);
+          // 6-second render timeout safety net to prevent infinite loading spinners
+          const renderTimeout = new Promise<never>((_, timeoutReject) => {
+            setTimeout(() => {
+              timeoutReject(new Error('Mermaid rendering timed out after 6 seconds.'));
+            }, 6000);
+          });
+
+          const renderPromise = mermaid.render(uniqueId, chart);
+          const { svg } = await Promise.race([renderPromise, renderTimeout]);
 
           cleanupMermaidDOMErrors(uniqueId);
 

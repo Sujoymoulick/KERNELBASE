@@ -23,68 +23,35 @@ export interface ArchitectureDiagramProps {
   isDark?: boolean;
 }
 
-const DEFAULT_SYSTEM_ARCHITECTURE_CHART = `graph TB
-    subgraph UI ["Desktop UI Plane (Electron / Tauri / Monaco)"]
-        Monaco["Monaco Code Editor & Diff Viewer"]
-        Terminal["xterm.js PTY Terminal"]
-        DAGView["Real-time DAG Visualizer"]
-        Zustand["Zustand Reactive Client Store"]
+const DEFAULT_SYSTEM_ARCHITECTURE_CHART = `flowchart TD
+    subgraph UI ["1. Desktop UI Plane"]
+        Editor["Monaco Editor & Terminal"]
+        Visualizer["DAG Task Visualizer"]
     end
 
-    subgraph Core ["Local Agent Daemon Control Plane (Node.js / Rust)"]
-        EventBus["SSE / WebSocket Event Bus"]
-        Orchestrator["Topological DAG Task Orchestrator"]
-        Registry["Agent Registry & Capability Matcher"]
-        CreditLedger["Credit & Token Budget Ledger"]
-        StateStore[("SQLite State & Run Persistence")]
+    subgraph Core ["2. Agent Control Plane"]
+        Orchestrator["Topological DAG Orchestrator"]
+        Registry["Agent & Tool Registry"]
+        StateStore[("SQLite State Store")]
     end
 
-    subgraph Gateway ["Model Gateway Plane (LiteLLM / Proxy)"]
-        Router["Tiered Routing & Fallback Engine"]
-        Tier1["Tier 1: Local Ollama (Qwen 2.5 Coder 7B/14B) - $0"]
-        Tier2["Tier 2: OpenRouter Cloud (Qwen 32B / DeepSeek V3)"]
-        Tier3["Tier 3: Frontier Fallback (Claude Sonnet 3.5 / GPT-4o)"]
+    subgraph Gateway ["3. Model Gateway Plane"]
+        Router["LiteLLM Tiered Router"]
+        LocalAI["Local Ollama (Free Tier)"]
+        CloudAI["OpenRouter / Cloud APIs"]
     end
 
-    subgraph Protocols ["Protocol & Tool Interop Plane"]
-        MCP["Model Context Protocol (MCP) Host"]
-        GitMgr["Git Worktree Isolation Manager (.ai-ide/worktrees)"]
-        DockerHost["Docker Engine Container Daemon"]
+    subgraph Sandbox ["4. Execution Sandbox"]
+        Docker["Docker Container Host"]
+        GitWorktree["Git Worktree Isolation"]
     end
 
-    subgraph Sandboxes ["Execution Sandbox Plane"]
-        Container[("Isolated Non-Root Alpine/Ubuntu Container")]
-        EphemeralFS[("Ephemeral Virtual Workspace FS")]
-        TestRunner["Automated Vitest / TAP Test Runner"]
-    end
-
-    %% Client to Core connections
-    Monaco --> EventBus
-    Terminal --> EventBus
-    DAGView --> EventBus
-    EventBus <--> Orchestrator
-
-    %% Core orchestration
-    Orchestrator --> Registry
-    Orchestrator --> CreditLedger
-    Orchestrator --> StateStore
-    Orchestrator --> Router
-
-    %% Gateway tier routing
-    Router --> Tier1
-    Router --> Tier2
-    Router --> Tier3
-
-    %% Tool execution
-    Orchestrator --> MCP
-    MCP --> GitMgr
-    MCP --> DockerHost
-
-    %% Sandbox containment
-    DockerHost --> Container
-    Container --> EphemeralFS
-    Container --> TestRunner
-    TestRunner -. "Diagnostics & Stack Traces" .-> Orchestrator`;
+    UI -->|IPC / Event Bus| Core
+    Core --> Router
+    Router --> LocalAI
+    Router --> CloudAI
+    Core --> Sandbox
+    Sandbox -.->|Test Diagnostics| Core`;
 
 const ARCHITECTURE_PRESETS = [
   {
@@ -131,11 +98,11 @@ const ARCHITECTURE_PRESETS = [
 
     Router -->|1. Syntactic Task or Offline| Tier1[Tier 1: Local Ollama / vLLM]
     subgraph Local [100% Free / Offline]
-        Tier1 --> QwenLocal["Qwen 2.5 Coder 7B ($0.00)"]
+        Tier1 --> QwenLocal["Qwen 2.5 Coder 7B (Free)"]
     end
 
     Router -->|2. Multi-file Refactor| Tier2[Tier 2: OpenRouter Budget]
-    subgraph CloudBudget [Low Cost (< $1/M tokens)]
+    subgraph CloudBudget [Low Cost (< 1 USD / M tokens)]
         Tier2 --> DeepSeek["DeepSeek V3 / Qwen 32B"]
     end
 
@@ -145,8 +112,8 @@ const ARCHITECTURE_PRESETS = [
     end
 
     QwenLocal --> TokenLedger[Credit Ledger: 0 Burn]
-    DeepSeek --> TokenLedger[Credit Ledger: $0.002 Burn]
-    Claude --> TokenLedger[Credit Ledger: $0.024 Burn]`,
+    DeepSeek --> TokenLedger[Credit Ledger: 0.002 USD Burn]
+    Claude --> TokenLedger[Credit Ledger: 0.024 USD Burn]`,
   },
 ];
 
@@ -267,25 +234,25 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
   return (
     <div
       id="architecture-diagram-component"
-      className={`my-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs transition-all ${
-        isFullscreen ? 'fixed inset-4 z-50 flex flex-col shadow-2xl bg-white dark:bg-slate-950' : ''
+      className={`my-8 rounded-xl border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0D1118] overflow-hidden shadow-xs transition-all ${
+        isFullscreen ? 'fixed inset-4 z-50 flex flex-col shadow-2xl bg-white dark:bg-[#08090B]' : ''
       }`}
     >
       {/* Header Bar */}
-      <div className="px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center space-x-2.5">
-          <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50 shrink-0">
+          <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-[#172033] text-indigo-600 dark:text-[#70a5ff] border border-indigo-200/50 dark:border-[#233558] shrink-0">
             <Layers className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-slate-100 flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-[#F5F7FA] flex flex-wrap items-center gap-1.5 sm:gap-2">
               <span>{title}</span>
-              <span className="text-[10px] font-mono font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.2 rounded border border-indigo-200/50 dark:border-indigo-800/50">
+              <span className="text-[10px] font-mono font-medium text-indigo-600 dark:text-[#70a5ff] bg-indigo-50 dark:bg-[#172033] px-2 py-0.2 rounded border border-indigo-200/50 dark:border-[#233558]">
                 Mermaid.js Live ({currentTheme ? 'Dark' : 'Light'})
               </span>
             </h3>
             {description && (
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-[11px] text-slate-500 dark:text-[#A7AFBD] mt-0.5">
                 {description}
               </p>
             )}
@@ -300,8 +267,8 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
               onClick={() => setIsEditorOpen((prev) => !prev)}
               className={`p-1.5 rounded-md text-xs font-medium flex items-center space-x-1.5 transition-colors min-h-[34px] ${
                 isEditorOpen
-                  ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800'
+                  ? 'bg-indigo-100 dark:bg-[#1d2b4a] text-indigo-700 dark:text-[#70a5ff]'
+                  : 'text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-200/70 dark:hover:bg-[#1A2333] dark:hover:text-[#F5F7FA]'
               }`}
               title={isEditorOpen ? 'Hide Mermaid Source Editor' : 'Edit Mermaid Source Code'}
             >
@@ -315,7 +282,7 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
           <button
             id="arch-copy-mermaid-btn"
             onClick={handleCopy}
-            className="p-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors min-h-[34px] min-w-[34px] flex items-center justify-center"
+            className="p-1.5 rounded-md text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-200/70 dark:hover:bg-[#1A2333] dark:hover:text-[#F5F7FA] transition-colors min-h-[34px] min-w-[34px] flex items-center justify-center"
             title="Copy Mermaid.js source to clipboard"
           >
             {isCopied ? (
@@ -328,7 +295,7 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
           <button
             id="arch-reset-btn"
             onClick={handleReset}
-            className="p-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors min-h-[34px] min-w-[34px] flex items-center justify-center"
+            className="p-1.5 rounded-md text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-200/70 dark:hover:bg-[#1A2333] dark:hover:text-[#F5F7FA] transition-colors min-h-[34px] min-w-[34px] flex items-center justify-center"
             title="Reset to default architecture diagram"
           >
             <RotateCcw className="h-3.5 w-3.5" />
@@ -337,7 +304,7 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
           <button
             id="arch-fullscreen-btn"
             onClick={() => setIsFullscreen((prev) => !prev)}
-            className="p-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors min-h-[34px] min-w-[34px] flex items-center justify-center"
+            className="p-1.5 rounded-md text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-200/70 dark:hover:bg-[#1A2333] dark:hover:text-[#F5F7FA] transition-colors min-h-[34px] min-w-[34px] flex items-center justify-center"
             title={isFullscreen ? 'Exit Fullscreen' : 'Expand Diagram View'}
           >
             {isFullscreen ? (
@@ -350,9 +317,9 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
       </div>
 
       {/* Presets and Zoom Bar */}
-      <div className="px-3.5 sm:px-5 py-2 bg-slate-100/60 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="px-3.5 sm:px-5 py-2 bg-slate-100/60 dark:bg-[#090C12] border-b border-slate-200 dark:border-[#1D2430] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center space-x-1.5 text-xs overflow-x-auto whitespace-nowrap scrollbar-none pb-1 sm:pb-0">
-          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-[#707987] shrink-0">
             Presets:
           </span>
           {ARCHITECTURE_PRESETS.map((preset) => (
@@ -362,8 +329,8 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
               onClick={() => handlePresetSelect(preset.id)}
               className={`px-2.5 py-1 rounded-md text-[11px] whitespace-nowrap transition-colors shrink-0 ${
                 activePreset === preset.id
-                  ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-semibold shadow-2xs border border-slate-200 dark:border-slate-700'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50'
+                  ? 'bg-white dark:bg-[#1d2b4a] text-indigo-600 dark:text-[#70a5ff] font-semibold shadow-2xs border border-slate-200 dark:border-[#233558]'
+                  : 'text-slate-600 dark:text-[#A7AFBD] hover:text-slate-900 dark:hover:text-[#F5F7FA] hover:bg-white/50 dark:hover:bg-[#141C2B]'
               }`}
             >
               {preset.label}
@@ -375,24 +342,24 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
         <div className="flex items-center space-x-1 shrink-0 self-end sm:self-auto">
           <button
             onClick={() => setZoomLevel((z) => Math.max(0.6, z - 0.1))}
-            className="px-2 py-0.5 rounded text-[11px] font-mono text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 min-h-[28px]"
+            className="px-2 py-0.5 rounded text-[11px] font-mono text-slate-500 dark:text-[#A7AFBD] hover:bg-slate-200 dark:hover:bg-[#141C2B] min-h-[28px]"
             title="Zoom Out"
           >
             -
           </button>
-          <span className="text-[10px] font-mono text-slate-400 px-1.5">
+          <span className="text-[10px] font-mono text-slate-400 dark:text-[#707987] px-1.5">
             {Math.round(zoomLevel * 100)}%
           </span>
           <button
             onClick={() => setZoomLevel((z) => Math.min(1.8, z + 0.1))}
-            className="px-2 py-0.5 rounded text-[11px] font-mono text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 min-h-[28px]"
+            className="px-2 py-0.5 rounded text-[11px] font-mono text-slate-500 dark:text-[#A7AFBD] hover:bg-slate-200 dark:hover:bg-[#141C2B] min-h-[28px]"
             title="Zoom In"
           >
             +
           </button>
           <button
             onClick={() => setZoomLevel(1)}
-            className="px-2 py-0.5 rounded text-[10px] text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 min-h-[28px]"
+            className="px-2 py-0.5 rounded text-[10px] text-slate-400 dark:text-[#707987] hover:bg-slate-200 dark:hover:bg-[#141C2B] min-h-[28px]"
             title="Reset Zoom"
           >
             100%
@@ -402,13 +369,13 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
 
       {/* Optional Live Source Editor */}
       {isEditorOpen && (
-        <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-900 text-slate-100 text-xs">
+        <div className="p-4 border-b border-slate-200 dark:border-[#1D2430] bg-slate-900 dark:bg-[#0B0D11] text-slate-100 text-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className="font-mono text-[11px] text-indigo-300 font-semibold flex items-center space-x-1.5">
+            <span className="font-mono text-[11px] text-indigo-300 dark:text-[#70a5ff] font-semibold flex items-center space-x-1.5">
               <Code2 className="h-3.5 w-3.5" />
               <span>Mermaid Diagram Live Source (Editable)</span>
             </span>
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[10px] text-slate-400 dark:text-[#707987]">
               Type or edit below to re-render in real-time
             </span>
           </div>
@@ -417,7 +384,7 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
             value={chartSource}
             onChange={(e) => setChartSource(e.target.value)}
             rows={10}
-            className="w-full font-mono text-xs p-3 rounded bg-slate-950 text-slate-200 border border-slate-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y leading-relaxed"
+            className="w-full font-mono text-xs p-3 rounded bg-slate-950 dark:bg-[#08090B] text-slate-200 dark:text-[#F5F7FA] border border-slate-700 dark:border-[#1D2430] focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y leading-relaxed"
             placeholder="Enter valid Mermaid.js graph or sequenceDiagram..."
             spellCheck={false}
           />
@@ -427,7 +394,7 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
       {/* Render Canvas Container with Dedicated Loading Fallback */}
       <div
         ref={containerRef}
-        className={`p-3 sm:p-5 md:p-6 bg-slate-50/40 dark:bg-slate-950/40 overflow-x-auto touch-pan-x touch-pan-y flex items-center justify-center transition-all ${
+        className={`p-3 sm:p-5 md:p-6 bg-slate-50/40 dark:bg-[#080c16] overflow-x-auto touch-pan-x touch-pan-y flex items-center justify-center transition-all ${
           isFullscreen ? 'flex-1' : 'min-h-[280px] sm:min-h-[380px]'
         }`}
       >
@@ -435,24 +402,24 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
           /* Loading Fallback */
           <div
             id="arch-diagram-loading-fallback"
-            className="py-16 flex flex-col items-center justify-center space-y-4 text-slate-400"
+            className="py-16 flex flex-col items-center justify-center space-y-4 text-slate-400 dark:text-[#707987]"
           >
             <div className="relative flex items-center justify-center">
-              <div className="h-10 w-10 rounded-full border-2 border-slate-200 dark:border-slate-800" />
-              <Loader2 className="h-6 w-6 text-indigo-600 dark:text-indigo-400 animate-spin absolute" />
+              <div className="h-10 w-10 rounded-full border-2 border-slate-200 dark:border-[#1D2430]" />
+              <Loader2 className="h-6 w-6 text-indigo-600 dark:text-[#70a5ff] animate-spin absolute" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <p className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
                 Rendering Architecture Diagram
               </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] text-slate-500 dark:text-[#A7AFBD]">
                 Compiling Mermaid.js vector definitions for {currentTheme ? 'dark mode' : 'light mode'}...
               </p>
             </div>
             {/* Animated Skeleton bars */}
             <div className="w-48 space-y-2 pt-2 opacity-60">
-              <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
-              <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded animate-pulse w-3/4 mx-auto" />
+              <div className="h-2 bg-slate-200 dark:bg-[#1D2430] rounded animate-pulse" />
+              <div className="h-2 bg-slate-200 dark:bg-[#1D2430] rounded animate-pulse w-3/4 mx-auto" />
             </div>
           </div>
         ) : renderError ? (
@@ -485,9 +452,9 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="px-5 py-2.5 bg-slate-50 dark:bg-slate-950/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+      <div className="px-5 py-2.5 bg-slate-50 dark:bg-[#0B0D11] border-t border-slate-200 dark:border-[#1D2430] flex items-center justify-between text-[11px] text-slate-500 dark:text-[#707987]">
         <span className="flex items-center space-x-1.5">
-          <Sparkles className="h-3 w-3 text-indigo-500" />
+          <Sparkles className="h-3 w-3 text-indigo-500 dark:text-[#70a5ff]" />
           <span>Multi-Plane Decoupled Client-Daemon Architecture</span>
         </span>
         <span className="font-mono text-[10px]">

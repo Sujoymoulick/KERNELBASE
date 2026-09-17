@@ -49,13 +49,13 @@ export const OnThisPage: React.FC<OnThisPageProps> = ({ sections }) => {
   };
 
   return (
-    <div className="hidden xl:block w-64 shrink-0 pl-8 text-sm">
+    <div className="hidden xl:block w-64 lg:w-72 shrink-0 pl-6 text-sm">
       <div className="sticky top-20">
-        <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
-          <AlignLeft className="h-3.5 w-3.5" />
-          <span>On this page</span>
+        <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#707987] mb-3">
+          <AlignLeft className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987]" />
+          <span>ON THIS PAGE</span>
         </div>
-        <ul className="space-y-2 border-l border-slate-200 dark:border-slate-800 text-xs">
+        <ul className="space-y-1.5 border-l border-slate-200 dark:border-[#1D2430] text-xs">
           {sections.map((sec) => {
             const isActive = activeId === sec.id;
             return (
@@ -63,10 +63,10 @@ export const OnThisPage: React.FC<OnThisPageProps> = ({ sections }) => {
                 <button
                   id={`toc-${sec.id}`}
                   onClick={() => scrollToSection(sec.id)}
-                  className={`-ml-px block pl-4 py-1 text-left w-full transition-colors border-l-2 truncate ${
+                  className={`-ml-px block pl-3.5 py-1 text-left w-full transition-colors border-l-2 truncate text-xs ${
                     isActive
-                      ? 'border-indigo-600 dark:border-indigo-400 text-indigo-600 dark:text-indigo-400 font-semibold'
-                      : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600'
+                      ? 'border-indigo-600 dark:border-[#3b82f6] text-indigo-600 dark:text-[#70a5ff] font-semibold'
+                      : 'border-transparent text-slate-600 dark:text-[#A7AFBD] hover:text-slate-900 dark:hover:text-[#F5F7FA]'
                   }`}
                   title={sec.title}
                 >
@@ -78,12 +78,12 @@ export const OnThisPage: React.FC<OnThisPageProps> = ({ sections }) => {
         </ul>
 
         {/* Feedback / Meta box */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-2">
-          <p className="font-medium text-slate-700 dark:text-slate-300">Technical Documentation</p>
-          <p>Verified current: September 2026</p>
-          <div className="pt-2 flex items-center space-x-2">
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
-              Zero-Cost Verified
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-[#1D2430] text-xs text-slate-500 dark:text-[#A7AFBD] space-y-1.5">
+          <p className="font-semibold text-slate-700 dark:text-[#F5F7FA]">Technical Documentation</p>
+          <p className="text-slate-500 dark:text-[#A7AFBD]">Verified current: September 2026</p>
+          <div className="pt-2 flex items-center">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-[#0a2618] dark:border dark:border-[#14532d] dark:text-[#34d399]">
+              <span className="text-[10px]">✔</span> Zero-Cost Verified
             </span>
           </div>
         </div>

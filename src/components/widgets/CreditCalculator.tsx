@@ -21,16 +21,16 @@ export const CreditCalculator: React.FC = () => {
   const savingsPercent = Math.round((savings / Math.max(0.01, commercialCost)) * 100);
 
   return (
-    <div id="interactive-credit-calculator" className="my-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+    <div id="interactive-credit-calculator" className="my-8 rounded-xl border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0D1118] overflow-hidden shadow-xs">
       {/* Card Header */}
-      <div className="px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-slate-950/80 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+      <div className="px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center space-x-2">
-          <Sparkles className="h-4 w-4 text-indigo-500 shrink-0" />
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+          <Sparkles className="h-4 w-4 text-indigo-500 dark:text-[#70a5ff] shrink-0" />
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-[#F5F7FA]">
             Interactive Token & Cost Simulator
           </h4>
         </div>
-        <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded self-start sm:self-auto">
+        <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/40 self-start sm:self-auto">
           {savingsPercent}% Cheaper than Frontier Only
         </span>
       </div>
@@ -40,10 +40,10 @@ export const CreditCalculator: React.FC = () => {
         <div className="space-y-6">
           <div>
             <div className="flex justify-between text-xs mb-1.5">
-              <label htmlFor="tasks-slider" className="font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="tasks-slider" className="font-medium text-slate-700 dark:text-[#A7AFBD]">
                 Monthly Autonomous Coding Runs:
               </label>
-              <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+              <span className="font-mono font-bold text-indigo-600 dark:text-[#70a5ff]">
                 {tasksPerMonth} runs
               </span>
             </div>
@@ -55,17 +55,17 @@ export const CreditCalculator: React.FC = () => {
               step="5"
               value={tasksPerMonth}
               onChange={(e) => setTasksPerMonth(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+              className="w-full h-1.5 bg-slate-200 dark:bg-[#1D2430] rounded-lg appearance-none cursor-pointer accent-indigo-600"
             />
-            <p className="text-[11px] text-slate-500 mt-1">Average developer runs 30–60 feature tasks monthly.</p>
+            <p className="text-[11px] text-slate-500 dark:text-[#707987] mt-1">Average developer runs 30–60 feature tasks monthly.</p>
           </div>
 
           <div>
             <div className="flex justify-between text-xs mb-1.5">
-              <label htmlFor="tokens-slider" className="font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="tokens-slider" className="font-medium text-slate-700 dark:text-[#A7AFBD]">
                 Average Tokens per Run (Planning + Tests):
               </label>
-              <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+              <span className="font-mono font-bold text-indigo-600 dark:text-[#70a5ff]">
                 {avgTokensPerTask.toLocaleString()} tokens
               </span>
             </div>
@@ -77,14 +77,14 @@ export const CreditCalculator: React.FC = () => {
               step="2500"
               value={avgTokensPerTask}
               onChange={(e) => setAvgTokensPerTask(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+              className="w-full h-1.5 bg-slate-200 dark:bg-[#1D2430] rounded-lg appearance-none cursor-pointer accent-indigo-600"
             />
-            <p className="text-[11px] text-slate-500 mt-1">Includes initial decomposition, code generation, and test verification.</p>
+            <p className="text-[11px] text-slate-500 dark:text-[#707987] mt-1">Includes initial decomposition, code generation, and test verification.</p>
           </div>
 
           <div>
             <div className="flex justify-between text-xs mb-1.5">
-              <label htmlFor="local-slider" className="font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="local-slider" className="font-medium text-slate-700 dark:text-[#A7AFBD]">
                 Workload Routed to Tier 1 Local Ollama ($0):
               </label>
               <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
@@ -99,9 +99,9 @@ export const CreditCalculator: React.FC = () => {
               step="5"
               value={localModelRatio}
               onChange={(e) => setLocalModelRatio(Number(e.target.value))}
-              className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+              className="w-full h-1.5 bg-slate-200 dark:bg-[#1D2430] rounded-lg appearance-none cursor-pointer accent-emerald-600"
             />
-            <p className="text-[11px] text-slate-500 mt-1">
+            <p className="text-[11px] text-slate-500 dark:text-[#707987] mt-1">
               {localModelRatio === 100
                 ? '100% Offline Student Mode: $0.00 forever'
                 : 'Hybrid routing: local handles planning/formatting, cloud handles complex refactors'}
@@ -112,22 +112,22 @@ export const CreditCalculator: React.FC = () => {
         {/* Cost Comparison Cards */}
         <div className="flex flex-col justify-between space-y-4">
           <div className="grid grid-cols-2 gap-3 text-center">
-            <div className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40">
-              <span className="text-[11px] text-slate-500 block mb-1">Naive Frontier Only</span>
-              <span className="text-xl font-bold font-mono text-slate-800 dark:text-slate-200">
+            <div className="p-3.5 rounded-lg border border-slate-200 dark:border-[#1D2430] bg-slate-50 dark:bg-[#090C12]">
+              <span className="text-[11px] text-slate-500 dark:text-[#707987] block mb-1">Naive Frontier Only</span>
+              <span className="text-xl font-bold font-mono text-slate-800 dark:text-[#F5F7FA]">
                 ${commercialCost.toFixed(2)}
               </span>
-              <span className="text-[10px] text-slate-400 block mt-0.5">per month</span>
+              <span className="text-[10px] text-slate-400 dark:text-[#707987] block mt-0.5">per month</span>
             </div>
 
-            <div className="p-3.5 rounded-lg border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/30">
-              <span className="text-[11px] text-indigo-700 dark:text-indigo-300 font-semibold block mb-1">
+            <div className="p-3.5 rounded-lg border border-indigo-200 dark:border-[#233558] bg-indigo-50/50 dark:bg-[#172033]">
+              <span className="text-[11px] text-indigo-700 dark:text-[#70a5ff] font-semibold block mb-1">
                 AI-Native IDE Hybrid
               </span>
-              <span className="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400">
+              <span className="text-xl font-bold font-mono text-indigo-600 dark:text-[#70a5ff]">
                 ${hybridCost.toFixed(2)}
               </span>
-              <span className="text-[10px] text-indigo-500 dark:text-indigo-400 block mt-0.5">
+              <span className="text-[10px] text-indigo-500 dark:text-[#70a5ff]/80 block mt-0.5">
                 per month
               </span>
             </div>
@@ -146,8 +146,8 @@ export const CreditCalculator: React.FC = () => {
             </p>
           </div>
 
-          <div className="text-[11px] text-slate-500 flex items-center space-x-1.5">
-            <Shield className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+          <div className="text-[11px] text-slate-500 dark:text-[#707987] flex items-center space-x-1.5">
+            <Shield className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0" />
             <span>Zero cloud credit card required when running in 100% Tier 1 Local mode.</span>
           </div>
         </div>

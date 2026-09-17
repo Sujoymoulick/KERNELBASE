@@ -20,9 +20,9 @@ export const modelsPages: DocPage[] = [
           body: 'Rather than binding every task to a $20/million-token frontier model, tasks are routed according to cognitive complexity.',
           mermaid: `graph TD
     Task([Subtask]) --> Router{Model Router}
-    Router -- Simple / Summarize / Format --> T1[Tier 1: Local Offline\nOllama / Qwen 2.5 Coder 7B\nCost: $0.00]
-    Router -- Standard Code / QA / Refactor --> T2[Tier 2: Free/Low-Cost Cloud\nOpenRouter / DeepSeek / Mistral\nCost: Free or <$0.001]
-    Router -- High Ambiguity / Complex Debug --> T3[Tier 3: Frontier Model\nUser Configured Claude / GPT-4o\nCost: User Key]`,
+    Router -->|Simple / Summarize / Format| T1[Tier 1: Local Offline\nOllama / Qwen 2.5 Coder 7B\nCost: $0.00]
+    Router -->|Standard Code / QA / Refactor| T2[Tier 2: Free/Low-Cost Cloud\nOpenRouter / DeepSeek / Mistral\nCost: Free or <$0.001]
+    Router -->|High Ambiguity / Complex Debug| T3[Tier 3: Frontier Model\nUser Configured Claude / GPT-4o\nCost: User Key]`,
           diagramTitle: 'Three-Tier Routing Architecture',
         },
       ],

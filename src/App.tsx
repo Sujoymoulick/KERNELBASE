@@ -79,7 +79,7 @@ function AppContent() {
   return (
     <div
       key={`app-theme-root-${isDark ? 'dark' : 'light'}`}
-      className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors selection:bg-indigo-500/20 selection:text-indigo-900 dark:selection:text-indigo-200"
+      className="min-h-screen bg-white dark:bg-[#08090B] text-slate-900 dark:text-[#F5F7FA] flex flex-col font-sans transition-colors selection:bg-orange-500/20 selection:text-orange-300"
     >
       {/* Top Fixed Header with immediate theme toggler */}
       <Header
@@ -94,8 +94,8 @@ function AppContent() {
         onToggleSidebar={() => setIsSidebarCollapsed((prev) => !prev)}
       />
 
-      {/* Main Container Layout */}
-      <div className="max-w-7xl mx-auto w-full flex-1 flex px-3 sm:px-6 lg:px-8">
+      {/* Main 3-Zone Desktop Container Layout */}
+      <div className="max-w-[1720px] mx-auto w-full flex-1 flex">
         {/* Left Sidebar Navigation */}
         <Sidebar
           currentSlug={currentPage.slug}
@@ -106,8 +106,8 @@ function AppContent() {
           onOpenSearch={() => setIsSearchOpen(true)}
         />
 
-        {/* Center Content & Right TOC with explicit isDark prop passing */}
-        <main className="flex-1 min-w-0 pt-6 sm:pt-8 md:pt-10 px-1 sm:px-4 md:px-8 lg:px-10 flex justify-between">
+        {/* Center Content & Right TOC */}
+        <main className="flex-1 min-w-0 pt-6 sm:pt-8 md:pt-10 px-4 sm:px-8 lg:px-12 flex justify-between gap-8 lg:gap-12">
           <DocRenderer
             page={currentPage}
             onNavigate={handleSelectPage}
