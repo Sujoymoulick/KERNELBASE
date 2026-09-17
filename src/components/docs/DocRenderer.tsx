@@ -164,6 +164,7 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
                       <CodeBlock
                         code={step.code}
                         language={step.language || 'bash'}
+                        filename={step.title}
                       />
                     )}
                   </div>
@@ -213,6 +214,7 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
                   code={cb.code}
                   language={cb.language}
                   filename={cb.filename}
+                  highlightLines={cb.highlightLines}
                 />
               ))}
 
@@ -226,6 +228,7 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
                     description={card.description}
                     badge={card.badge}
                     href={card.href || card.link}
+                    code={card.code}
                   />
                 ))}
               </div>

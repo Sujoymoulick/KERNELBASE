@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, CheckCircle2, Clock, Terminal, ChevronDown, ChevronRight, Copy, Check } from 'lucide-react';
+import { copyToClipboard } from '../../utils/clipboard';
 
 interface DayMilestone {
   day: number;
@@ -161,12 +162,10 @@ export const MvpTracker: React.FC = () => {
 
   const handleCopy = async (cmd: string, dayNum: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(cmd);
+    const success = await copyToClipboard(cmd);
+    if (success) {
       setCopiedDay(dayNum);
       setTimeout(() => setCopiedDay(null), 2000);
-    } catch {
-      setCopiedDay(null);
     }
   };
 

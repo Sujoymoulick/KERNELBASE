@@ -6,6 +6,7 @@ import { DocRenderer } from './components/docs/DocRenderer';
 import { OnThisPage } from './components/docs/OnThisPage';
 import { getDocPageBySlug, ALL_DOC_PAGES } from './data/pages';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { useDocJsonLd } from './hooks/useDocJsonLd';
 
 function AppContent() {
   const [currentSlug, setCurrentSlug] = useState<string>(() => {
@@ -59,24 +60,8 @@ function AppContent() {
 
   const currentPage = getDocPageBySlug(currentSlug) || ALL_DOC_PAGES[0];
 
-  // Dynamically update document title and meta description for SEO & crawlers
-  useEffect(() => {
-    if (currentPage) {
-      document.title = `${currentPage.title} – ${currentPage.section} | AI-Native IDE Docs`;
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription && currentPage.description) {
-        metaDescription.setAttribute('content', currentPage.description);
-      }
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle) {
-        ogTitle.setAttribute('content', `${currentPage.title} – ${currentPage.section}`);
-      }
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-      if (ogDescription && currentPage.description) {
-        ogDescription.setAttribute('content', currentPage.description);
-      }
-    }
-  }, [currentPage]);
+  // Dynamically generate and inject JSON-LD structured data and head metadata for SEO
+  useDocJsonLd(currentPage);
 
   // Global Cmd+K / Ctrl+K keyboard shortcut
   useEffect(() => {

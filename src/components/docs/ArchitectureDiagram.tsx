@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { renderMermaidDiagram } from '../../utils/mermaidRenderer';
 import { useTheme } from '../../context/ThemeContext';
+import { copyToClipboard } from '../../utils/clipboard';
 
 export interface ArchitectureDiagramProps {
   chart?: string;
@@ -243,12 +244,10 @@ export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
   }, [chartSource, currentTheme, uniqueIdPrefix]);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(chartSource);
+    const success = await copyToClipboard(chartSource);
+    if (success) {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch {
-      setIsCopied(false);
     }
   };
 

@@ -1,8 +1,9 @@
 import React from 'react';
-import { ExternalLink, BookOpen, Layers } from 'lucide-react';
+import { ExternalLink, Layers } from 'lucide-react';
 import { DocCard } from '../../types/docs';
+import { CodeBlock } from './CodeBlock';
 
-export const ResourceCard: React.FC<DocCard> = ({ title, description, href, badge }) => {
+export const ResourceCard: React.FC<DocCard> = ({ title, description, href, badge, code }) => {
   const cardId = `resource-card-${title.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
@@ -27,6 +28,11 @@ export const ResourceCard: React.FC<DocCard> = ({ title, description, href, badg
         <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
           {description}
         </p>
+        {code && (
+          <div className="my-2">
+            <CodeBlock code={code} language="bash" filename={title} />
+          </div>
+        )}
       </div>
 
       {href && (
