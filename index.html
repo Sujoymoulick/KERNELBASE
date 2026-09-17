@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Native Multi-Agent IDE — Architecture & Docs</title>
+    <meta name="description" content="Production research, system architecture, multi-agent orchestration, and implementation documentation for an AI-Native IDE." />
+    <meta property="og:title" content="AI-Native Multi-Agent IDE — Architecture & Docs" />
+    <meta property="og:description" content="Production research, system architecture, multi-agent orchestration, and implementation documentation for an AI-Native IDE." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AI-Native IDE Docs" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI-Native Multi-Agent IDE — Architecture & Docs" />
+    <meta name="twitter:description" content="Production research, system architecture, multi-agent orchestration, and implementation documentation for an AI-Native IDE." />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else if (saved === 'light') {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "AI-Native Multi-Agent IDE Architecture & Specification",
+      "description": "Production research, system architecture, multi-agent orchestration, and implementation documentation for an AI-Native IDE.",
+      "author": {
+        "@type": "Organization",
+        "name": "AI-Native IDE Research Group"
+      },
+      "dependencies": "TypeScript, Docker, MCP, LiteLLM, Ollama",
+      "inLanguage": "en"
+    }
+    </script>
+  </head>
+  <body class="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-amber-500/20 selection:text-amber-900 dark:selection:text-amber-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

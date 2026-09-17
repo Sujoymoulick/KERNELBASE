@@ -1,0 +1,8 @@
+# robots.txt for AI-Native Multi-Agent IDE Documentation
+# Reference: https://www.robotstxt.org/
+
+User-agent: *
+Allow: /
+
+# Direct crawlers to the authoritative XML sitemap
+Sitemap: https://ais-dev-h5dzhefwrzvy5wnao74hdp-754212472880.asia-southeast1.run.app/sitemap.xml
