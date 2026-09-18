@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, FileText, ArrowRight, CornerDownLeft, X, Sparkles, Hash } from 'lucide-react';
+import { Search, FileText, CornerDownLeft, X } from 'lucide-react';
 import { ALL_DOC_PAGES } from '../../data/pages';
-import { DocPage } from '../../types/docs';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -27,39 +26,26 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     }
   }, [isOpen]);
 
-  // Search logic across all pages, tags, and section headers
   const results = React.useMemo(() => {
     if (!query.trim()) {
-      return ALL_DOC_PAGES.slice(0, 8); // Top default recommended pages
+      return ALL_DOC_PAGES.slice(0, 8);
     }
-
     const q = query.toLowerCase().trim();
     return ALL_DOC_PAGES.filter((page) => {
-      const matchTitle = page.title.toLowerCase().includes(q);
-      const matchDesc = page.description.toLowerCase().includes(q);
-      const matchSection = page.section.toLowerCase().includes(q);
-      const matchCategory = page.category ? page.category.toLowerCase().includes(q) : false;
-      const matchTags = page.tags?.some((t) => t.toLowerCase().includes(q));
-      const matchSubsections = page.content.sections.some((s) =>
-        s.title.toLowerCase().includes(q)
-      );
-
       return (
-        matchTitle ||
-        matchDesc ||
-        matchSection ||
-        matchCategory ||
-        matchTags ||
-        matchSubsections
+        page.title.toLowerCase().includes(q) ||
+        page.description.toLowerCase().includes(q) ||
+        page.section.toLowerCase().includes(q) ||
+        (page.category ? page.category.toLowerCase().includes(q) : false) ||
+        page.tags?.some((t) => t.toLowerCase().includes(q)) ||
+        page.content.sections.some((s) => s.title.toLowerCase().includes(q))
       );
     }).slice(0, 15);
   }, [query]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-
       if (e.key === 'Escape') {
         onClose();
       } else if (e.key === 'ArrowDown') {
@@ -76,7 +62,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         }
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, results, selectedIndex, onClose, onSelectPage]);
@@ -86,47 +71,53 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   return (
     <div
       id="search-dialog-backdrop"
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
         id="search-dialog"
-        className="w-full max-w-2xl rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden"
+        className="w-full max-w-2xl rounded-xl border shadow-2xl overflow-hidden"
+        style={{ borderColor: 'var(--kb-border)', backgroundColor: 'var(--kb-surface)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Box */}
-        <div className="flex items-center px-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-          <Search className="h-4 w-4 text-slate-400 shrink-0 mr-3" />
+        <div
+          className="flex items-center px-4 border-b"
+          style={{ borderColor: 'var(--kb-border)', backgroundColor: 'var(--kb-surface-elevated)' }}
+        >
+          <Search className="h-4 w-4 shrink-0 mr-3" style={{ color: 'var(--kb-text-faint)' }} />
           <input
             ref={inputRef}
             id="docs-search-input"
             type="text"
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setSelectedIndex(0);
-            }}
+            onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
             placeholder="Search documentation, architecture, agents, free stack, or code..."
-            className="w-full py-3.5 text-sm bg-transparent text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none"
+            className="w-full py-3.5 text-sm bg-transparent focus:outline-none"
+            style={{ color: 'var(--kb-text)' }}
           />
           {query && (
-            <button
-              onClick={() => setQuery('')}
-              className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-            >
+            <button onClick={() => setQuery('')} style={{ color: 'var(--kb-text-faint)' }}>
               <X className="h-4 w-4" />
             </button>
           )}
-          <span className="hidden sm:inline-block text-[10px] font-mono text-slate-400 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 ml-2">
+          <span
+            className="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border ml-2 font-semibold"
+            style={{
+              backgroundColor: 'var(--kb-bg)',
+              borderColor: 'var(--kb-border)',
+              color: 'var(--kb-text-muted)',
+            }}
+          >
             ESC
           </span>
         </div>
 
         {/* Results List */}
-        <div className="max-h-[60vh] overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-slate-800/40">
+        <div className="max-h-[60vh] overflow-y-auto p-2 divide-y" style={{ borderColor: 'var(--kb-border)' }}>
           {results.length === 0 ? (
-            <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">
-              <p className="font-semibold text-sm mb-1">No documentation matches found</p>
+            <div className="py-12 text-center text-xs" style={{ color: 'var(--kb-text-faint)' }}>
+              <p className="font-semibold text-sm mb-1" style={{ color: 'var(--kb-text)' }}>No documentation matches found</p>
               <p>Try searching for "Orchestrator", "Ollama", "Tauri", "DAG", or "Credits".</p>
             </div>
           ) : (
@@ -136,42 +127,50 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                 <div
                   key={page.slug}
                   id={`search-result-${index}`}
-                  onClick={() => {
-                    onSelectPage(page.slug);
-                    onClose();
-                  }}
+                  onClick={() => { onSelectPage(page.slug); onClose(); }}
                   onMouseEnter={() => setSelectedIndex(index)}
-                  className={`p-3 rounded-lg flex items-start justify-between cursor-pointer transition-colors ${
-                    isSelected
-                      ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-900 dark:text-indigo-200'
-                      : 'hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'
-                  }`}
+                  className="p-3 rounded-lg flex items-start justify-between cursor-pointer transition-colors border-l-2"
+                  style={isSelected ? {
+                    backgroundColor: 'color-mix(in srgb, var(--kb-brand-secondary) 25%, transparent)',
+                    borderLeftColor: 'var(--kb-accent-bright)',
+                    color: 'var(--kb-text)',
+                  } : {
+                    borderLeftColor: 'transparent',
+                    color: 'var(--kb-text-muted)',
+                  }}
                 >
                   <div className="flex items-start space-x-3 truncate">
                     <FileText
-                      className={`h-4 w-4 mt-0.5 shrink-0 ${
-                        isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'
-                      }`}
+                      className="h-4 w-4 mt-0.5 shrink-0"
+                      style={{ color: isSelected ? 'var(--kb-accent-bright)' : 'var(--kb-text-faint)' }}
                     />
                     <div className="truncate">
                       <div className="flex items-center space-x-2 truncate">
-                        <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 truncate">
+                        <span className="font-semibold text-xs truncate" style={{ color: 'var(--kb-text)' }}>
                           {page.title}
                         </span>
-                        <span className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                        <span
+                          className="text-[10px] uppercase font-mono px-1.5 py-0.2 rounded border shrink-0"
+                          style={{
+                            backgroundColor: 'var(--kb-surface-elevated)',
+                            color: 'var(--kb-accent-bright)',
+                            borderColor: 'var(--kb-border)',
+                          }}
+                        >
                           {page.section}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                      <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--kb-text-subtle)' }}>
                         {page.description}
                       </p>
                     </div>
                   </div>
-
                   <CornerDownLeft
-                    className={`h-3.5 w-3.5 shrink-0 ml-2 mt-1 transition-opacity ${
-                      isSelected ? 'opacity-100 text-indigo-600 dark:text-indigo-400' : 'opacity-0'
-                    }`}
+                    className="h-3.5 w-3.5 shrink-0 ml-2 mt-1 transition-opacity"
+                    style={{
+                      opacity: isSelected ? 1 : 0,
+                      color: 'var(--kb-accent-bright)',
+                    }}
                   />
                 </div>
               );
@@ -180,26 +179,23 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         </div>
 
         {/* Footer info */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-950/80 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+        <div
+          className="p-3 border-t flex items-center justify-between text-[11px]"
+          style={{ backgroundColor: 'var(--kb-surface)', borderColor: 'var(--kb-border)', color: 'var(--kb-text-faint)' }}
+        >
           <div className="flex items-center space-x-3">
             <span>
-              <kbd className="font-mono bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">
-                ↑
-              </kbd>{' '}
-              <kbd className="font-mono bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">
-                ↓
-              </kbd>{' '}
+              <kbd className="font-mono px-1.5 py-0.5 rounded border text-[10px]" style={{ backgroundColor: 'var(--kb-surface-elevated)', borderColor: 'var(--kb-border)', color: 'var(--kb-text-muted)' }}>↑</kbd>{' '}
+              <kbd className="font-mono px-1.5 py-0.5 rounded border text-[10px]" style={{ backgroundColor: 'var(--kb-surface-elevated)', borderColor: 'var(--kb-border)', color: 'var(--kb-text-muted)' }}>↓</kbd>{' '}
               to navigate
             </span>
             <span>
-              <kbd className="font-mono bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">
-                ↵
-              </kbd>{' '}
+              <kbd className="font-mono px-1.5 py-0.5 rounded border text-[10px]" style={{ backgroundColor: 'var(--kb-surface-elevated)', borderColor: 'var(--kb-border)', color: 'var(--kb-text-muted)' }}>↵</kbd>{' '}
               to select
             </span>
           </div>
-          <span className="font-mono text-[10px] text-indigo-600 dark:text-indigo-400">
-            Pagefind Static Index
+          <span className="font-mono text-[10px]" style={{ color: 'var(--kb-accent-bright)' }}>
+            Kernel Base Quick Search
           </span>
         </div>
       </div>

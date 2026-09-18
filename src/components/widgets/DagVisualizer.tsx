@@ -155,8 +155,8 @@ export const DagVisualizer: React.FC = () => {
       {/* Visualizer header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between px-3.5 sm:px-5 py-3 sm:py-3.5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] gap-3">
         <div className="flex items-center space-x-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 dark:bg-[#70a5ff] animate-ping shrink-0" />
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-[#F5F7FA]">
+          <span className="h-2.5 w-2.5 rounded-full bg-indigo-600 dark:bg-[#70a5ff] animate-ping shrink-0" />
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-[#F5F7FA]">
             Live DAG Orchestrator & Loop
           </h4>
         </div>
@@ -166,7 +166,7 @@ export const DagVisualizer: React.FC = () => {
             id="dag-sim-step"
             onClick={handleNextStep}
             disabled={simStep >= 6}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-indigo-600 dark:bg-[#1d2b4a] hover:bg-indigo-700 dark:hover:bg-[#233558] disabled:opacity-50 text-white dark:text-[#70a5ff] text-xs font-medium border border-transparent dark:border-[#233558] shadow-xs transition-colors min-h-[34px]"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-indigo-600 dark:bg-[#1d2b4a] hover:bg-indigo-700 dark:hover:bg-[#233558] disabled:opacity-50 text-white dark:text-[#70a5ff] text-xs font-semibold border border-transparent dark:border-[#233558] shadow-xs transition-colors min-h-[34px]"
           >
             <Play className="h-3 w-3" />
             <span>{simStep >= 6 ? 'Completed' : 'Simulate Next Step'}</span>
@@ -174,7 +174,7 @@ export const DagVisualizer: React.FC = () => {
           <button
             id="dag-sim-reset"
             onClick={handleReset}
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-md border border-slate-300 dark:border-[#1D2430] text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-100 dark:hover:bg-[#141C2B] text-xs transition-colors min-h-[34px]"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-md border border-slate-300 dark:border-[#1D2430] text-slate-700 dark:text-[#A7AFBD] hover:bg-slate-100 dark:hover:bg-[#141C2B] text-xs transition-colors min-h-[34px]"
             title="Reset simulation"
           >
             <RotateCcw className="h-3 w-3" />
@@ -186,7 +186,7 @@ export const DagVisualizer: React.FC = () => {
       <div className="p-3.5 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
         {/* Node list representing DAG graph */}
         <div className="lg:col-span-7 space-y-3">
-          <div className="text-[11px] font-semibold text-slate-500 dark:text-[#707987] uppercase tracking-wider mb-2">
+          <div className="text-[11px] font-bold text-slate-600 dark:text-[#707987] uppercase tracking-wider mb-2">
             Topological Dependency Nodes (Kahn's Sort Order)
           </div>
 
@@ -199,16 +199,16 @@ export const DagVisualizer: React.FC = () => {
                 onClick={() => setSelectedTask(task)}
                 className={`p-3 sm:p-3.5 rounded-lg border transition-all cursor-pointer relative ${
                   isSelected
-                    ? 'border-indigo-500 dark:border-[#70a5ff] bg-indigo-50/40 dark:bg-[#172033] ring-1 ring-indigo-500 dark:ring-[#70a5ff]'
-                    : 'border-slate-200 dark:border-[#1D2430] bg-slate-50/50 dark:bg-[#090C12] hover:border-slate-300 dark:hover:border-[#233558]'
+                    ? 'border-indigo-500 dark:border-[#70a5ff] bg-indigo-50/70 dark:bg-[#172033] ring-1 ring-indigo-500 dark:ring-[#70a5ff]'
+                    : 'border-slate-200 dark:border-[#1D2430] bg-slate-100/60 dark:bg-[#090C12] hover:border-slate-300 dark:hover:border-[#233558]'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs font-mono font-bold text-slate-700 dark:text-[#A7AFBD] shrink-0">
+                    <span className="text-xs font-mono font-bold text-slate-800 dark:text-[#A7AFBD] shrink-0">
                       Node {index + 1}:
                     </span>
-                    <span className="text-xs font-semibold text-slate-900 dark:text-[#F5F7FA]">
+                    <span className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA]">
                       {task.title}
                     </span>
                   </div>
@@ -217,8 +217,8 @@ export const DagVisualizer: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-500 dark:text-[#707987] mt-2">
-                  <span className="font-mono text-indigo-600 dark:text-[#70a5ff]">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-600 dark:text-[#707987] mt-2 font-medium">
+                  <span className="font-mono text-indigo-700 dark:text-[#70a5ff] font-semibold">
                     Agent: {task.agent}
                   </span>
                   <span>

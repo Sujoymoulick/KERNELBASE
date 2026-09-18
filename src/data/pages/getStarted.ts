@@ -265,7 +265,7 @@ export const getStartedPages: DocPage[] = [
           table: {
             headers: ['Software', 'Minimum Version', 'Purpose', 'Free/Open Source?'],
             rows: [
-              ['Node.js', 'v20.0.0+ LTS', 'Desktop runtime & API orchestration', 'Yes (MIT)'],
+              ['Node.js', 'v18.0.0+ LTS (light) / v20.0.0+ LTS (recommended)', 'Desktop runtime & API orchestration', 'Yes (MIT)'],
               ['Docker Engine', 'v24.0.0+', 'Container sandbox isolation', 'Yes (Apache 2.0)'],
               ['Git', 'v2.38.0+', 'Repository management & worktrees', 'Yes (GPLv2)'],
               ['Ollama (Optional)', 'v0.5.0+', '100% offline local model inference', 'Yes (MIT)'],

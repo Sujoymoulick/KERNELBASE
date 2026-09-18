@@ -2,37 +2,240 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─── Dark theme (default) ─────────────────────────────────────────────── */
+html.dark {
+  --kb-bg:               #120704;
+  --kb-surface:          #1A0B07;
+  --kb-surface-elevated: #24100A;
+  --kb-surface-secondary:#321309;
+  --kb-border:           #5A210F;
+  --kb-border-hover:     #A64011;
+  --kb-brand:            #752C12;
+  --kb-brand-secondary:  #A64011;
+  --kb-accent:           #D9531E;
+  --kb-accent-bright:    #E86526;
+  --kb-text:             #F8F5F2;
+  --kb-text-muted:       #C4B7B0;
+  --kb-text-subtle:      #A89B95;
+  --kb-text-faint:       #8E7D75;
+  --kb-code-bg:          #0E0503;
+  --kb-code-header:      #1A0B07;
+  --kb-code-border:      #5A210F;
+  --kb-code-text:        #F8F5F2;
+  --kb-selection-bg:     rgba(166,64,17,0.30);
+  color-scheme: dark;
+}
+
+/* ─── Light theme ───────────────────────────────────────────────────────── */
+html:not(.dark) {
+  --kb-bg:               #FDF9F7;
+  --kb-surface:          #FFFFFF;
+  --kb-surface-elevated: #F7EFEA;
+  --kb-surface-secondary:#F0E4DD;
+  --kb-border:           #E8D2C8;
+  --kb-border-hover:     #C0491E;
+  --kb-brand:            #9B3A18;
+  --kb-brand-secondary:  #C0491E;
+  --kb-accent:           #C94B1A;
+  --kb-accent-bright:    #E86526;
+  --kb-text:             #1C0A06;
+  --kb-text-muted:       #3D1A10;
+  --kb-text-subtle:      #6B3525;
+  --kb-text-faint:       #9C5A45;
+  --kb-code-bg:          #1A0B07;
+  --kb-code-header:      #24100A;
+  --kb-code-border:      #5A210F;
+  --kb-code-text:        #F8F5F2;
+  --kb-selection-bg:     rgba(201,75,26,0.15);
+  color-scheme: light;
+}
+
+/* ─── Base styles using CSS vars ────────────────────────────────────────── */
 @layer base {
   html {
     scroll-behavior: smooth;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--kb-bg);
+    color: var(--kb-text);
+  }
+
+  body {
+    background-color: var(--kb-bg);
+    color: var(--kb-text);
   }
 
   /* Code font fallback */
   code, pre, kbd {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
+
+  ::selection {
+    background-color: var(--kb-selection-bg);
+  }
 }
 
-/* Minimalist scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ─── Scrollbars ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.3);
+  background: rgba(166, 64, 17, 0.3);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.5);
-}
+::-webkit-scrollbar-thumb:hover { background: rgba(232, 101, 38, 0.5); }
 
-/* Suppress any raw error SVGs injected into document body by mermaid */
+/* ─── Mermaid error suppression ─────────────────────────────────────────── */
 body > [id^="dmermaid"],
 body > [id^="darch-diagram"],
 body > svg.error-icon {
   display: none !important;
+}
+
+/* ─── Semantic utility classes mapped to CSS vars ───────────────────────── */
+.kb-bg               { background-color: var(--kb-bg); }
+.kb-surface          { background-color: var(--kb-surface); }
+.kb-surface-elevated { background-color: var(--kb-surface-elevated); }
+.kb-surface-secondary{ background-color: var(--kb-surface-secondary); }
+.kb-border           { border-color: var(--kb-border); }
+.kb-text             { color: var(--kb-text); }
+.kb-text-muted       { color: var(--kb-text-muted); }
+.kb-text-subtle      { color: var(--kb-text-subtle); }
+.kb-text-faint       { color: var(--kb-text-faint); }
+.kb-accent           { color: var(--kb-accent-bright); }
+.kb-code-bg          { background-color: var(--kb-code-bg); }
+
+/* ─── Left-to-Right Theme Transition (View Transitions API) ──────────────── */
+::view-transition-group(root) {
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 99999;
+}
+
+::view-transition-old(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  animation: kb-theme-wipe 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  mix-blend-mode: normal !important;
+  z-index: 2;
+  will-change: clip-path;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+@keyframes kb-theme-wipe {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ─── Theme Transition Leading Edge & Fallback Layer ─────────────────────── */
+.kb-theme-edge-wipe {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  will-change: transform, opacity;
+  transform: translate3d(-2px, 0, 0);
+  animation: kb-edge-sweep 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+  contain: strict;
+  backface-visibility: hidden;
+}
+
+.kb-edge-dark {
+  background: linear-gradient(
+    180deg,
+    rgba(217, 83, 30, 0.25) 0%,
+    rgba(232, 101, 38, 0.85) 30%,
+    rgba(166, 64, 17, 1) 50%,
+    rgba(232, 101, 38, 0.85) 70%,
+    rgba(217, 83, 30, 0.25) 100%
+  );
+  box-shadow:
+    0 0 10px 1px rgba(217, 83, 30, 0.35),
+    -3px 0 16px 2px rgba(166, 64, 17, 0.25),
+    0 0 2px 1px rgba(232, 101, 38, 0.7);
+}
+
+.kb-edge-light {
+  background: linear-gradient(
+    180deg,
+    rgba(192, 73, 30, 0.25) 0%,
+    rgba(232, 101, 38, 0.8) 30%,
+    rgba(192, 73, 30, 0.95) 50%,
+    rgba(232, 101, 38, 0.8) 70%,
+    rgba(192, 73, 30, 0.25) 100%
+  );
+  box-shadow:
+    0 0 10px 1px rgba(232, 101, 38, 0.3),
+    -3px 0 16px 2px rgba(192, 73, 30, 0.2),
+    0 0 2px 1px rgba(192, 73, 30, 0.6);
+}
+
+@keyframes kb-edge-sweep {
+  0% {
+    transform: translate3d(-2px, 0, 0);
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(100vw, 0, 0);
+    opacity: 0;
+  }
+}
+
+.kb-theme-fallback-wipe {
+  position: fixed;
+  inset: 0;
+  will-change: clip-path;
+  animation: kb-theme-wipe 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  contain: strict;
+}
+
+/* ─── Theme Toggle Button Icon Animation ─────────────────────────────────── */
+.kb-theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: kb-icon-enter 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+@keyframes kb-icon-enter {
+  0% {
+    transform: rotate(-30deg) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ─── Reduced Motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+
+  .kb-theme-edge-wipe,
+  .kb-theme-fallback-wipe,
+  .kb-theme-toggle-icon {
+    animation: none !important;
+  }
 }

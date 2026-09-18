@@ -126,20 +126,20 @@ export const DesktopComparison: React.FC = () => {
     <div id="desktop-comparison-widget" className="my-8 rounded-xl border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#0D1118] overflow-hidden shadow-xs">
       <div className="p-3.5 sm:p-5 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-800 dark:text-[#F5F7FA]">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-[#F5F7FA]">
             Desktop Runtime Frameworks Evaluation
           </h4>
-          <p className="text-[11px] text-slate-500 dark:text-[#A7AFBD] mt-0.5">
+          <p className="text-[11px] text-slate-600 dark:text-[#A7AFBD] mt-0.5">
             Evaluated for an AI-Native IDE with PTY terminal, Monaco Editor, and Docker.
           </p>
         </div>
-        <span className="text-[11px] font-mono bg-indigo-50 dark:bg-[#172033] text-indigo-700 dark:text-[#70a5ff] border border-indigo-200 dark:border-[#233558] px-2.5 py-1 rounded-md self-start sm:self-auto shrink-0">
+        <span className="text-[11px] font-mono bg-indigo-50 dark:bg-[#172033] text-indigo-700 dark:text-[#70a5ff] border border-indigo-200 dark:border-[#233558] px-2.5 py-1 rounded-md self-start sm:self-auto shrink-0 font-semibold">
           Checked: September 2026
         </span>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 dark:border-[#1D2430] bg-slate-100/50 dark:bg-[#090C12] text-xs overflow-x-auto scrollbar-none">
+      <div className="flex border-b border-slate-200 dark:border-[#1D2430] bg-slate-100/70 dark:bg-[#090C12] text-xs overflow-x-auto scrollbar-none">
         {FRAMEWORKS.map((fw) => (
           <button
             key={fw.id}
@@ -147,17 +147,17 @@ export const DesktopComparison: React.FC = () => {
             onClick={() => setSelectedFw(fw)}
             className={`px-3.5 sm:px-4 py-2.5 font-medium whitespace-nowrap transition-colors border-b-2 flex items-center space-x-2 shrink-0 ${
               selectedFw.id === fw.id
-                ? 'border-indigo-600 dark:border-[#70a5ff] text-indigo-600 dark:text-[#70a5ff] bg-white dark:bg-[#0D1118]'
-                : 'border-transparent text-slate-600 dark:text-[#A7AFBD] hover:text-slate-900 dark:hover:text-[#F5F7FA]'
+                ? 'border-indigo-600 text-indigo-700 font-bold bg-white dark:bg-[#0D1118] dark:border-[#70a5ff] dark:text-[#70a5ff]'
+                : 'border-transparent text-slate-700 dark:text-[#A7AFBD] hover:text-slate-900 dark:hover:text-[#F5F7FA] hover:bg-slate-200/60 dark:hover:bg-[#141C2B]'
             }`}
           >
             <span>{fw.name}</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
               fw.recommendation === 'MVP Recommended'
-                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-transparent'
                 : fw.recommendation === 'Production v1.0 Target'
-                ? 'bg-blue-100 text-blue-800 dark:bg-[#172033] dark:text-[#70a5ff] dark:border dark:border-[#233558]'
-                : 'bg-slate-200 text-slate-700 dark:bg-[#101624] dark:text-[#A7AFBD]'
+                ? 'bg-blue-100 text-blue-800 border border-blue-200 dark:bg-[#172033] dark:text-[#70a5ff] dark:border-[#233558]'
+                : 'bg-slate-200 text-slate-700 border border-slate-300 dark:bg-[#101624] dark:text-[#A7AFBD] dark:border-transparent'
             }`}>
               {fw.recommendation}
             </span>

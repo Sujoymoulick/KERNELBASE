@@ -44,18 +44,18 @@ export const TechMatrixTable: React.FC = () => {
       <div className="p-4 bg-slate-50 dark:bg-[#0B0D11] border-b border-slate-200 dark:border-[#1D2430] space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-[#707987]" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500 dark:text-[#707987]" />
             <input
               id="tech-search-input"
               type="text"
               placeholder="Search 27 technologies, licenses, or alternatives..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-[#1D2430] bg-white dark:bg-[#090C12] text-slate-800 dark:text-[#F5F7FA] placeholder:text-slate-400 dark:placeholder:text-[#707987] focus:outline-none focus:ring-2 focus:ring-indigo-500 min-h-[36px]"
+              className="w-full pl-9 pr-4 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-[#1D2430] bg-white dark:bg-[#090C12] text-slate-900 dark:text-[#F5F7FA] placeholder:text-slate-500 dark:placeholder:text-[#707987] focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium min-h-[36px]"
             />
           </div>
 
-          <label className="inline-flex items-center space-x-2 text-xs font-medium text-slate-700 dark:text-[#A7AFBD] cursor-pointer shrink-0">
+          <label className="inline-flex items-center space-x-2 text-xs font-semibold text-slate-800 dark:text-[#A7AFBD] cursor-pointer shrink-0">
             <input
               id="student-friendly-toggle"
               type="checkbox"
@@ -76,8 +76,8 @@ export const TechMatrixTable: React.FC = () => {
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-2.5 py-1 rounded-md text-[11px] whitespace-nowrap transition-colors shrink-0 ${
                 selectedCategory === cat.id
-                  ? 'bg-indigo-600 text-white font-medium'
-                  : 'bg-slate-100 dark:bg-[#101624] text-slate-600 dark:text-[#A7AFBD] hover:bg-slate-200 dark:hover:bg-[#141C2B] border border-transparent dark:border-[#1D2430]'
+                  ? 'bg-indigo-600 text-white font-semibold'
+                  : 'bg-slate-100 dark:bg-[#101624] text-slate-700 dark:text-[#A7AFBD] hover:bg-slate-200 dark:hover:bg-[#141C2B] border border-slate-300 dark:border-[#1D2430] font-medium'
               }`}
             >
               {cat.label}
@@ -90,7 +90,7 @@ export const TechMatrixTable: React.FC = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs min-w-[720px]">
           <thead>
-            <tr className="border-b border-slate-200 dark:border-[#1D2430] bg-slate-100/70 dark:bg-[#090C12] text-slate-600 dark:text-[#A7AFBD] font-semibold">
+            <tr className="border-b border-slate-200 dark:border-[#1D2430] bg-slate-100 text-slate-900 dark:bg-[#090C12] dark:text-[#A7AFBD] font-bold">
               <th className="py-2.5 px-3">Technology</th>
               <th className="py-2.5 px-3">Purpose in IDE</th>
               <th className="py-2.5 px-3">License</th>

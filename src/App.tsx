@@ -7,6 +7,7 @@ import { OnThisPage } from './components/docs/OnThisPage';
 import { getDocPageBySlug, ALL_DOC_PAGES } from './data/pages';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { useDocJsonLd } from './hooks/useDocJsonLd';
+import { ThemeTransitionOverlay } from './components/common/ThemeTransitionOverlay';
 
 function AppContent() {
   const [currentSlug, setCurrentSlug] = useState<string>(() => {
@@ -35,8 +36,8 @@ function AppContent() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
-  // Active theme from centralized ThemeContext
-  const { isDark, toggleTheme } = useTheme();
+  // Active theme and transition state from centralized ThemeContext
+  const { isDark, toggleTheme, isTransitioning, targetTheme, isFallback } = useTheme();
 
   // Hash route listener
   useEffect(() => {
@@ -78,13 +79,25 @@ function AppContent() {
 
   return (
     <div
-      key={`app-theme-root-${isDark ? 'dark' : 'light'}`}
-      className="min-h-screen bg-white dark:bg-[#08090B] text-slate-900 dark:text-[#F5F7FA] flex flex-col font-sans transition-colors selection:bg-orange-500/20 selection:text-orange-300"
+      key="app-theme-root"
+      className="min-h-screen flex flex-col font-sans transition-colors"
+      style={{
+        backgroundColor: 'var(--kb-bg)',
+        color: 'var(--kb-text)',
+      }}
     >
+      {/* Fullscreen Left-to-Right Theme Transition Overlay */}
+      <ThemeTransitionOverlay
+        isTransitioning={isTransitioning}
+        targetTheme={targetTheme}
+        isFallback={isFallback}
+      />
+
       {/* Top Fixed Header with immediate theme toggler */}
       <Header
         onOpenSearch={() => setIsSearchOpen(true)}
         isDark={isDark}
+        isTransitioning={isTransitioning}
         onToggleTheme={toggleTheme}
         onToggleMobileMenu={() => setIsMobileMenuOpen((prev) => !prev)}
         isMobileMenuOpen={isMobileMenuOpen}

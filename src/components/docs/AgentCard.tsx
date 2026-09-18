@@ -30,39 +30,39 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, onSelect }) => {
               <Bot className="h-4 w-4" />
             </div>
             <div>
-              <h4 className="font-semibold text-slate-900 dark:text-[#F5F7FA] text-sm">
+              <h4 className="font-bold text-slate-900 dark:text-[#F5F7FA] text-sm">
                 {agent.name}
               </h4>
-              <span className="text-[11px] font-mono text-slate-500 dark:text-[#707987]">
+              <span className="text-[11px] font-mono text-slate-600 dark:text-[#707987]">
                 id: {agent.id}
               </span>
             </div>
           </div>
-          <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${badgeClass}`}>
+          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${badgeClass}`}>
             {agent.role}
           </span>
         </div>
 
-        <p className="text-xs text-slate-600 dark:text-[#A7AFBD] leading-relaxed mb-4">
+        <p className="text-xs text-slate-700 dark:text-[#A7AFBD] leading-relaxed mb-4">
           {agent.description}
         </p>
 
         <div className="space-y-2 mb-4 pt-3 border-t border-slate-100 dark:border-[#1D2430]">
-          <div className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-[#A7AFBD]">
-            <Cpu className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987]" />
-            <span className="text-[11px] text-slate-400 dark:text-[#707987]">Recommended Model:</span>
-            <span className="font-mono text-[11px] font-medium text-indigo-600 dark:text-[#70a5ff]">
+          <div className="flex items-center space-x-1.5 text-xs text-slate-700 dark:text-[#A7AFBD]">
+            <Cpu className="h-3.5 w-3.5 text-slate-500 dark:text-[#707987]" />
+            <span className="text-[11px] text-slate-600 dark:text-[#707987]">Recommended Model:</span>
+            <span className="font-mono text-[11px] font-semibold text-indigo-700 dark:text-[#70a5ff]">
               {agent.recommendedModel}
             </span>
           </div>
 
-          <div className="flex items-start space-x-1.5 text-xs text-slate-600 dark:text-[#A7AFBD]">
-            <Wrench className="h-3.5 w-3.5 text-slate-400 dark:text-[#707987] shrink-0 mt-0.5" />
+          <div className="flex items-start space-x-1.5 text-xs text-slate-700 dark:text-[#A7AFBD]">
+            <Wrench className="h-3.5 w-3.5 text-slate-500 dark:text-[#707987] shrink-0 mt-0.5" />
             <div className="flex flex-wrap gap-1">
               {agent.tools.map((t: string) => (
                 <span
                   key={t}
-                  className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#101624] text-[10px] font-mono text-slate-600 dark:text-[#A7AFBD] border border-transparent dark:border-[#1D2430]"
+                  className="px-1.5 py-0.5 rounded bg-slate-100 text-[10px] font-mono text-slate-700 border border-slate-300 dark:bg-[#101624] dark:text-[#A7AFBD] dark:border-transparent font-medium"
                 >
                   {t}
                 </span>

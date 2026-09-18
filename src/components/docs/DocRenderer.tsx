@@ -6,7 +6,6 @@ import { CodeBlock } from './CodeBlock';
 import { MermaidDiagram } from './MermaidDiagram';
 import { Pagination } from './Pagination';
 import { ResourceCard } from './ResourceCard';
-import { AgentCard } from './AgentCard';
 import { DagVisualizer } from '../widgets/DagVisualizer';
 import { CreditCalculator } from '../widgets/CreditCalculator';
 import { TechMatrixTable } from '../widgets/TechMatrixTable';
@@ -15,7 +14,7 @@ import { DesktopComparison } from '../widgets/DesktopComparison';
 import { ArchitectureDiagram } from './ArchitectureDiagram';
 import { CloudflarePrimitivesCard } from '../widgets/CloudflarePrimitivesCard';
 import { MobileTableOfContents } from './OnThisPage';
-import { Calendar, Tag, ArrowRight, ThumbsUp, ThumbsDown, Check, Sparkles } from 'lucide-react';
+import { Calendar, Tag, ArrowRight, ThumbsUp, ThumbsDown, Check } from 'lucide-react';
 import { getAdjacentPages } from '../../data/pages';
 import { copyToClipboard } from '../../utils/clipboard';
 
@@ -25,7 +24,7 @@ interface DocRendererProps {
   isDark?: boolean;
 }
 
-export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDark }) => {
+export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDark = true }) => {
   const { prev, next } = getAdjacentPages(page.slug);
   const [feedbackGiven, setFeedbackGiven] = React.useState<boolean>(false);
   const [copiedPrompt, setCopiedPrompt] = useState<boolean>(false);
@@ -63,7 +62,7 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
   };
 
   return (
-    <article className="min-w-0 max-w-4xl flex-1 pb-16">
+    <article className="min-w-0 max-w-4xl flex-1 pb-16" style={{ color: 'var(--kb-text)' }}>
       {/* Breadcrumbs navigation */}
       <Breadcrumbs
         section={page.section}
@@ -72,67 +71,92 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
         onNavigateHome={() => onNavigate('get-started/overview')}
       />
 
-      {/* Cloudflare Style Hero Header for Overview Page */}
+      {/* Hero Header for Overview Page */}
       {isOverview ? (
-        <header className="mb-10 pb-8 border-b border-zinc-800">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-3 font-sans">
+        <header className="mb-10 pb-8 border-b" style={{ borderColor: 'var(--kb-border)' }}>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3 font-sans" style={{ color: 'var(--kb-text)' }}>
             Kernel Base Developer Docs
           </h1>
-          <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-2xl mb-6">
-            Explore guides and tutorials to start building on the Kernel Base platform
+          <p className="text-base sm:text-lg leading-relaxed max-w-2xl mb-6" style={{ color: 'var(--kb-text-muted)' }}>
+            Explore guides, specifications, and architecture to build on the Kernel Base platform
           </p>
           <div className="flex flex-wrap items-center gap-3">
+            {/* Primary Button */}
             <button
               onClick={() => onNavigate('architecture/system-architecture')}
-              className="px-6 py-2.5 rounded-full bg-[#f38020] hover:bg-[#e07010] text-white font-semibold text-sm shadow-md hover:shadow-orange-500/20 transition-all flex items-center space-x-2"
+              className="px-6 py-2.5 rounded-full font-semibold text-sm shadow-md transition-all flex items-center space-x-2 border focus:outline-none focus:ring-2"
+              style={{
+                backgroundColor: 'var(--kb-accent-bright)',
+                color: '#fff',
+                borderColor: 'var(--kb-brand-secondary)',
+              }}
             >
               <span>Get started</span>
+              <ArrowRight className="h-4 w-4" />
             </button>
+            {/* Secondary Button */}
             <button
               onClick={handleCopyPrompt}
-              className="px-4 py-2.5 rounded-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 font-medium text-xs sm:text-sm transition-all flex items-center space-x-2"
+              className="px-4 py-2.5 rounded-full border font-medium text-xs sm:text-sm transition-all flex items-center space-x-2"
+              style={{
+                backgroundColor: 'var(--kb-surface-elevated)',
+                color: 'var(--kb-text-muted)',
+                borderColor: 'var(--kb-border)',
+              }}
             >
-              <span className="text-orange-400 font-mono">💥 ⎇ ⬡</span>
+              <span className="font-mono" style={{ color: 'var(--kb-accent-bright)' }}>⎇ ⬡</span>
               <span>{copiedPrompt ? 'Copied prompt!' : 'Copy prompt'}</span>
-              {copiedPrompt && <Check className="h-3.5 w-3.5 text-emerald-400" />}
+              {copiedPrompt && <Check className="h-3.5 w-3.5" style={{ color: 'var(--kb-accent-bright)' }} />}
             </button>
           </div>
         </header>
       ) : (
         /* Standard Page Title & Meta */
-        <header className="mb-8 pb-6 border-b border-zinc-800">
+        <header className="mb-8 pb-6 border-b" style={{ borderColor: 'var(--kb-border)' }}>
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="text-[11px] font-mono uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-orange-950/40 text-orange-400 border border-orange-800/40">
+            <span
+              className="text-[11px] font-mono uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded border"
+              style={{
+                backgroundColor: 'var(--kb-surface-elevated)',
+                color: 'var(--kb-accent-bright)',
+                borderColor: 'var(--kb-border)',
+              }}
+            >
               {page.section}
             </span>
             {page.category && (
-              <span className="text-[11px] text-zinc-400">
+              <span className="text-[11px]" style={{ color: 'var(--kb-text-subtle)' }}>
                 • {page.category}
               </span>
             )}
             {page.checkedDate && (
-              <span className="ml-auto inline-flex items-center space-x-1 text-[11px] text-zinc-400">
+              <span className="ml-auto inline-flex items-center space-x-1 text-[11px]" style={{ color: 'var(--kb-text-faint)' }}>
                 <Calendar className="h-3 w-3" />
                 <span>Verified {page.checkedDate}</span>
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight mb-3">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mb-3" style={{ color: 'var(--kb-text)' }}>
             {page.title}
           </h1>
 
-          <p className="text-sm sm:text-base text-zinc-400 leading-relaxed max-w-3xl">
+          <p className="text-sm sm:text-base leading-relaxed max-w-3xl" style={{ color: 'var(--kb-text-muted)' }}>
             {page.description}
           </p>
 
           {page.tags && page.tags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 mt-4">
-              <Tag className="h-3 w-3 text-zinc-500" />
+              <Tag className="h-3 w-3" style={{ color: 'var(--kb-text-faint)' }} />
               {page.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-850 text-zinc-400 border border-zinc-800"
+                  className="text-[10px] font-mono px-2 py-0.5 rounded border"
+                  style={{
+                    backgroundColor: 'var(--kb-surface-elevated)',
+                    color: 'var(--kb-text-muted)',
+                    borderColor: 'var(--kb-border)',
+                  }}
                 >
                   #{tag}
                 </span>
@@ -146,10 +170,10 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
       <MobileTableOfContents sections={page.content.sections} />
 
       {/* Main Body */}
-      <div className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
+      <div className="max-w-none text-sm leading-relaxed" style={{ color: 'var(--kb-text-muted)' }}>
         {/* Lead Paragraph */}
         {page.content.lead && (
-          <p className="text-base font-medium text-slate-800 dark:text-slate-200 leading-relaxed mb-6">
+          <p className="text-base font-medium leading-relaxed mb-6" style={{ color: 'var(--kb-text)' }}>
             {page.content.lead}
           </p>
         )}
@@ -160,14 +184,20 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
         {/* Dynamic Sections */}
         {page.content.sections.map((section) => (
           <section key={section.id} id={section.id} className="mt-10 mb-8 scroll-mt-24">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight pb-2 border-b border-slate-100 dark:border-slate-800/80 mb-4 flex items-center group">
-              <a href={`#${section.id}`} className="hover:underline">
+            <h2
+              className="text-xl sm:text-2xl font-bold tracking-tight pb-2 border-b mb-4 flex items-center group"
+              style={{ color: 'var(--kb-text)', borderColor: 'var(--kb-border)' }}
+            >
+              <a
+                href={`#${section.id}`}
+                className="hover:opacity-80 transition-opacity"
+              >
                 {section.title}
               </a>
             </h2>
 
             {section.body && (
-              <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed" style={{ color: 'var(--kb-text-muted)' }}>
                 {section.body}
               </p>
             )}
@@ -196,12 +226,16 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
                 {section.steps.map((step, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40"
+                    className="p-4 rounded-lg border"
+                    style={{
+                      borderColor: 'var(--kb-border)',
+                      backgroundColor: 'color-mix(in srgb, var(--kb-surface-elevated) 50%, transparent)',
+                    }}
                   >
-                    <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 mb-1">
+                    <div className="font-semibold text-sm mb-1" style={{ color: 'var(--kb-text)' }}>
                       {step.title}
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 leading-relaxed">
+                    <p className="text-xs mb-2 leading-relaxed" style={{ color: 'var(--kb-text-muted)' }}>
                       {step.description}
                     </p>
                     {step.code && (
@@ -218,10 +252,16 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
 
             {/* Structured Table */}
             {section.table && (
-              <div className="my-6 overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800 shadow-2xs">
+              <div
+                className="my-6 overflow-x-auto rounded-lg border shadow-2xs"
+                style={{ borderColor: 'var(--kb-border)', backgroundColor: 'var(--kb-surface)' }}
+              >
                 <table className="w-full text-left border-collapse text-xs min-w-[520px]">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-900 font-semibold text-slate-800 dark:text-slate-200">
+                    <tr
+                      className="border-b font-semibold"
+                      style={{ borderColor: 'var(--kb-border)', backgroundColor: 'var(--kb-surface-elevated)', color: 'var(--kb-text)' }}
+                    >
                       {section.table.headers.map((h, i) => (
                         <th key={i} className="py-2.5 px-3">
                           {h}
@@ -229,16 +269,18 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                  <tbody className="divide-y" style={{ borderColor: 'var(--kb-border)' }}>
                     {section.table.rows.map((row, rIdx) => (
                       <tr
                         key={rIdx}
-                        className="hover:bg-slate-50/60 dark:hover:bg-slate-850/50 transition-colors"
+                        className="transition-colors"
+                        style={{ borderColor: 'var(--kb-border)' }}
                       >
                         {row.map((cell, cIdx) => (
                           <td
                             key={cIdx}
-                            className="py-2.5 px-3 text-slate-600 dark:text-slate-300"
+                            className="py-2.5 px-3"
+                            style={{ color: 'var(--kb-text-muted)' }}
                           >
                             {cell}
                           </td>
@@ -282,8 +324,11 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
 
         {/* Related Pages */}
         {page.content.relatedPages && page.content.relatedPages.length > 0 && (
-          <div className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-4">
+          <div className="mt-12 pt-6 border-t" style={{ borderColor: 'var(--kb-border)' }}>
+            <h3
+              className="text-xs font-semibold uppercase tracking-wider mb-4"
+              style={{ color: 'var(--kb-text-faint)' }}
+            >
               Related Documentation
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -291,12 +336,19 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
                 <button
                   key={rel.slug}
                   onClick={() => onNavigate(rel.slug)}
-                  className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500/60 bg-white dark:bg-slate-900/60 transition-all text-left flex items-center justify-between group"
+                  className="p-3.5 rounded-lg border transition-all text-left flex items-center justify-between group"
+                  style={{
+                    borderColor: 'var(--kb-border)',
+                    backgroundColor: 'color-mix(in srgb, var(--kb-surface-elevated) 60%, transparent)',
+                  }}
                 >
-                  <span className="text-xs font-medium text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  <span
+                    className="text-xs font-medium transition-colors"
+                    style={{ color: 'var(--kb-text)' }}
+                  >
                     {rel.title}
                   </span>
-                  <ArrowRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-transform group-hover:translate-x-0.5" />
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" style={{ color: 'var(--kb-text-faint)' }} />
                 </button>
               ))}
             </div>
@@ -305,26 +357,34 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
       </div>
 
       {/* Was this page helpful? */}
-      <div className="mt-10 p-4 rounded-lg bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <span className="text-xs text-slate-600 dark:text-slate-400">
+      <div
+        className="mt-10 p-4 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+        style={{
+          backgroundColor: 'color-mix(in srgb, var(--kb-surface-elevated) 60%, transparent)',
+          borderColor: 'var(--kb-border)',
+        }}
+      >
+        <span className="text-xs" style={{ color: 'var(--kb-text-muted)' }}>
           Was this documentation page helpful?
         </span>
         {feedbackGiven ? (
-          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          <span className="text-xs font-medium" style={{ color: 'var(--kb-accent-bright)' }}>
             Thank you for your feedback!
           </span>
         ) : (
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setFeedbackGiven(true)}
-              className="p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+              className="p-1.5 rounded-md transition-colors"
+              style={{ color: 'var(--kb-text-faint)' }}
               title="Yes, this was helpful"
             >
               <ThumbsUp className="h-4 w-4" />
             </button>
             <button
               onClick={() => setFeedbackGiven(true)}
-              className="p-1.5 rounded-md hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+              className="p-1.5 rounded-md transition-colors"
+              style={{ color: 'var(--kb-text-faint)' }}
               title="No, needs improvement"
             >
               <ThumbsDown className="h-4 w-4" />
