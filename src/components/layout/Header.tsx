@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Github, Menu, X, PanelLeft, PanelLeftClose, User, Sun, Moon, MoreVertical } from 'lucide-react';
+import { Search, Github, Menu, X, PanelLeft, PanelLeftClose, User, Sun, Moon } from 'lucide-react';
 import { KernelBaseLogo } from './KernelBaseLogo';
 
 interface HeaderProps {
@@ -199,22 +199,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </span>
-          </button>
-
-          {/* Mobile Three-Dot Navigation Toggle (Hidden on desktop) */}
-          <button
-            id="mobile-more-toggle"
-            onClick={onToggleMobileMenu}
-            className="md:hidden flex items-center justify-center h-8 w-8 rounded-full border transition-all focus:outline-none"
-            style={{
-              borderColor: 'var(--kb-border)',
-              backgroundColor: 'var(--kb-surface-elevated)',
-              color: 'var(--kb-text-subtle)',
-            }}
-            title="More options"
-            aria-label="Toggle navigation drawer"
-          >
-            <MoreVertical className="h-4 w-4" />
           </button>
 
           {/* GitHub Repository Link (Desktop) */}
