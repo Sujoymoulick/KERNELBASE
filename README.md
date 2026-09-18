@@ -1,10 +1,12 @@
-# Kernel Base Documentation — AI-Native Multi-Agent IDE
-
 <div align="center">
 
-![Kernel Base Docs Preview](public/logo.png)
+<img src="public/logo.png" alt="Kernel Base Logo" width="120" />
 
-### Production Research, System Architecture & Multi-Agent Orchestration Specification
+# Kernel Base Documentation
+
+**Production Research, System Architecture & Multi-Agent Orchestration Specification for the AI-Native IDE**
+
+<br />
 
 [![Release Status](https://img.shields.io/badge/Release_Preview-Releasing_Shortly_on_GitHub-E86526?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Sujoymoulick/kernelbase-docs)
 [![Version](https://img.shields.io/badge/Version-v0.1.0--preview-752C12?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/Sujoymoulick/kernelbase-docs/releases)
@@ -13,6 +15,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Vite](https://img.shields.io/badge/Vite-8.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
+
+<br />
 
 [Explore Documentation](#documentation-directory) • [Architecture Overview](#system-architecture) • [Agent System](#11-autonomous-agents) • [Release Roadmap](#versioning--release-milestones) • [Quick Start](#quick-start)
 
