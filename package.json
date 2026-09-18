@@ -1,8 +1,30 @@
 {
-  "name": "react-example",
+  "name": "kernelbase-docs",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0-preview",
+  "description": "Production research, system architecture, multi-agent orchestration, and implementation documentation for Kernel Base AI-Native IDE.",
   "type": "module",
+  "license": "Apache-2.0",
+  "author": "Kernel Base Team",
+  "homepage": "https://github.com/Sujoymoulick/kernelbase-docs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sujoymoulick/kernelbase-docs.git"
+  },
+  "keywords": [
+    "kernelbase",
+    "ai-native-ide",
+    "multi-agent",
+    "agentic-workflow",
+    "mcp",
+    "litellm",
+    "ollama",
+    "dag-orchestration",
+    "react19",
+    "typescript",
+    "tailwind-v4",
+    "documentation"
+  ],
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "tsx scripts/generate-sitemap.ts && vite build",
@@ -25,6 +47,7 @@
     "vite": "^8.3.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
@@ -32,7 +55,6 @@
     "esbuild": "^0.28.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "@types/express": "^4.17.21"
+    "typescript": "^7.0.2"
   }
 }
