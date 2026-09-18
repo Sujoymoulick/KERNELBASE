@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Github, Menu, X, PanelLeft, PanelLeftClose, User, Sun, Moon } from 'lucide-react';
+import { Search, Github, Menu, X, PanelLeft, PanelLeftClose, User, Sun, Moon, MoreVertical } from 'lucide-react';
 import { KernelBaseLogo } from './KernelBaseLogo';
 
 interface HeaderProps {
@@ -43,14 +43,14 @@ export const Header: React.FC<HeaderProps> = ({
         color: 'var(--kb-text)',
       }}
     >
-      <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Mobile / Tablet Toggles & Brand Logo */}
-        <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
+        <div className="flex items-center space-x-1.5 sm:space-x-4 shrink-0">
           {/* Mobile hamburger menu button */}
           <button
             id="mobile-menu-toggle"
             onClick={onToggleMobileMenu}
-            className="md:hidden p-2 rounded-lg focus:outline-none min-h-[40px] min-w-[40px] flex items-center justify-center transition-colors"
+            className="md:hidden p-1.5 rounded-lg focus:outline-none min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors"
             style={{ color: 'var(--kb-text-subtle)' }}
             aria-label="Toggle navigation menu"
             aria-expanded={isMobileMenuOpen}
@@ -83,12 +83,12 @@ export const Header: React.FC<HeaderProps> = ({
               e.preventDefault();
               onSelectSection('get-started/overview');
             }}
-            className="flex items-center space-x-2 font-bold text-base tracking-tight hover:opacity-95 transition-opacity"
+            className="flex items-center space-x-1.5 sm:space-x-2 font-bold text-sm sm:text-base tracking-tight hover:opacity-95 transition-opacity"
             style={{ color: 'var(--kb-text)' }}
           >
-            <KernelBaseLogo size={30} showWordmark={true} />
+            <KernelBaseLogo size={26} showWordmark={true} />
             <span
-              className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-widest ml-1"
+              className="hidden xs:inline-block px-1.5 sm:px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest ml-0.5"
               style={{
                 backgroundColor: 'var(--kb-surface-elevated)',
                 color: 'var(--kb-accent-bright)',
@@ -101,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
           </a>
         </div>
 
-        {/* Center: Top Navigation Quick Links */}
+        {/* Center: Top Navigation Quick Links (Desktop) */}
         <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 overflow-x-auto scrollbar-none py-1 text-xs font-medium">
           {topNavItems.map((item) => {
             const isActive = activeSection.startsWith(item.id) ||
@@ -132,13 +132,29 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </nav>
 
-        {/* Right: Search, Theme Toggle, GitHub, User Profile */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          {/* Rounded Pill Search Trigger Button */}
+        {/* Right: Search, Theme Toggle, Three-dot Menu, GitHub, User Profile */}
+        <div className="flex items-center space-x-1.5 sm:space-x-3">
+          {/* Mobile Search Icon Button (Hidden on desktop) */}
+          <button
+            id="mobile-header-search-btn"
+            onClick={onOpenSearch}
+            className="md:hidden flex items-center justify-center h-8 w-8 rounded-full border transition-all focus:outline-none"
+            style={{
+              borderColor: 'var(--kb-border)',
+              backgroundColor: 'var(--kb-surface-elevated)',
+              color: 'var(--kb-text-subtle)',
+            }}
+            title="Search documentation"
+            aria-label="Search documentation"
+          >
+            <Search className="h-4 w-4" />
+          </button>
+
+          {/* Desktop Search Bar Input Pill (Hidden on mobile) */}
           <button
             id="header-search-btn"
             onClick={onOpenSearch}
-            className="flex items-center justify-between space-x-2 px-3.5 py-1.5 rounded-full border text-xs transition-all w-36 sm:w-56 md:w-64 min-h-[36px] focus:outline-none shadow-2xs"
+            className="hidden md:flex items-center justify-between space-x-2 px-3.5 py-1.5 rounded-full border text-xs transition-all w-48 md:w-64 min-h-[36px] focus:outline-none shadow-2xs"
             style={{
               borderColor: 'var(--kb-border)',
               backgroundColor: 'var(--kb-surface)',
@@ -151,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="truncate text-xs font-medium">Search documentation...</span>
             </div>
             <kbd
-              className="hidden sm:inline-flex items-center font-mono text-[10px] px-1.5 py-0.2 rounded shrink-0 font-semibold"
+              className="inline-flex items-center font-mono text-[10px] px-1.5 py-0.2 rounded shrink-0 font-semibold"
               style={{
                 backgroundColor: 'var(--kb-surface-elevated)',
                 borderColor: 'var(--kb-border)',
@@ -163,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({
             </kbd>
           </button>
 
-          {/* Theme Toggle Button */}
+          {/* Theme Toggle Button (Always visible on all screen sizes) */}
           <button
             id="theme-toggle-btn"
             onClick={onToggleTheme}
@@ -185,10 +201,26 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </button>
 
-          {/* GitHub Repository Link */}
+          {/* Mobile Three-Dot Navigation Toggle (Hidden on desktop) */}
+          <button
+            id="mobile-more-toggle"
+            onClick={onToggleMobileMenu}
+            className="md:hidden flex items-center justify-center h-8 w-8 rounded-full border transition-all focus:outline-none"
+            style={{
+              borderColor: 'var(--kb-border)',
+              backgroundColor: 'var(--kb-surface-elevated)',
+              color: 'var(--kb-text-subtle)',
+            }}
+            title="More options"
+            aria-label="Toggle navigation drawer"
+          >
+            <MoreVertical className="h-4 w-4" />
+          </button>
+
+          {/* GitHub Repository Link (Desktop) */}
           <a
             id="github-repo-link"
-            href="https://github.com"
+            href="https://github.com/Sujoymoulick/kernelbase-docs"
             target="_blank"
             rel="noreferrer"
             className="p-2 rounded-lg border border-transparent transition-colors focus:outline-none hidden sm:inline-flex min-h-[36px] min-w-[36px] items-center justify-center"
@@ -199,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Github className="h-4 w-4" />
           </a>
 
-          {/* User Profile Avatar Icon */}
+          {/* User Profile Avatar Icon (Desktop) */}
           <button
             className="p-2 rounded-lg border border-transparent transition-colors focus:outline-none hidden sm:inline-flex min-h-[36px] min-w-[36px] items-center justify-center"
             style={{ color: 'var(--kb-text-subtle)' }}
