@@ -1,0 +1,10 @@
+# Global code owners
+# All files require review by repository owner/admin unless merged under admin authority
+
+* @Sujoymoulick
+
+# Core Desktop & Security Subsystems
+/electron/ @Sujoymoulick
+/entitlements.plist @Sujoymoulick
+/forge.config.cjs @Sujoymoulick
+/docs/security/ @Sujoymoulick
