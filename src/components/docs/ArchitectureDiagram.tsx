@@ -32,6 +32,7 @@ export interface ArchitectureDiagramProps {
   description?: string;
   allowEdit?: boolean;
   isDark?: boolean;
+  onNavigate?: (slug: string) => void;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -241,13 +242,14 @@ const MermaidArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
 export const ArchitectureDiagram: React.FC<ArchitectureDiagramProps> = ({
   chart,
   isDark,
+  onNavigate,
   ...rest
 }) => {
   // If no chart source is provided, use the new interactive architecture explorer
   if (!chart) {
-    return <InteractiveArchitecture isDark={isDark} />;
+    return <InteractiveArchitecture isDark={isDark} onNavigate={onNavigate} />;
   }
 
   // Otherwise fall back to legacy Mermaid renderer (preserves other usages)
-  return <MermaidArchitectureDiagram chart={chart} isDark={isDark} {...rest} />;
+  return <MermaidArchitectureDiagram chart={chart} isDark={isDark} onNavigate={onNavigate} {...rest} />;
 };

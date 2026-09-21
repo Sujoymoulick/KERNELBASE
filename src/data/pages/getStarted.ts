@@ -4,38 +4,62 @@ export const getStartedPages: DocPage[] = [
   {
     slug: 'get-started/overview',
     title: 'Overview',
-    description: 'An architectural and technical introduction to the AI-Native Multi-Agent IDE platform.',
+    description: 'An architectural and technical introduction to the Kernel Base AI-Native Multi-Agent IDE platform.',
     section: 'Get Started',
     category: 'Introduction',
     order: 1,
     checkedDate: 'September 2026',
-    tags: ['overview', 'multi-agent', 'ide', 'introduction'],
+    tags: ['overview', 'multi-agent', 'ide', 'introduction', 'kernel-base', 'vision'],
     content: {
-      lead: 'The AI-Native Multi-Agent IDE is an open-source, desktop-first developer platform designed from the ground up for collaborative, autonomous multi-agent software engineering.',
+      lead: 'Kernel Base is an AI-Native Multi-Agent Desktop IDE that allows users and organizations to delegate complex development, research, analysis, automation, and engineering tasks to coordinated AI agent teams while supporting cloud models, custom LLM gateways, and local open-source models running entirely on your machine.',
       interactiveComponent: 'architecture-diagram',
       sections: [
         {
-          id: 'what-is-it',
-          title: 'What is the AI-Native Multi-Agent IDE?',
-          body: 'Traditional code editors treat AI as a conversational sidebar or a single-line tab completion engine. The AI-Native Multi-Agent IDE reimagines the editor as a distributed runtime where specialized autonomous agents—Planners, Coders, Researchers, Reviewers, and QA Engineers—collaborate concurrently in an isolated sandbox to plan, write, verify, and repair software.',
+          id: 'what-is-kernel-base',
+          title: 'What is Kernel Base?',
+          body: 'Traditional code editors treat AI as a conversational sidebar or a single-line tab completion engine. Kernel Base reimagines the developer workspace as an AI-Native operating system where specialized autonomous agent teams collaborate concurrently in an isolated sandbox to plan, research, write, verify, and repair software.',
           callout: {
             type: 'important',
-            title: 'Core Paradigm Shift',
-            text: 'Single-agent chat assistants suffer from context drift and failure compounding. The AI-Native IDE treats coding as an iterative graph of discrete, verifiable subtasks assigned to specialized micro-agents with strict capability boundaries.',
+            title: 'The Kernel Base Paradigm: Beyond "IDE + AI Chat"',
+            text: 'Kernel Base is not simply an editor with an LLM chat plugin. It is a complete multi-agent runtime incorporating a Task Graph DAG Engine, Multi-Provider Model Gateway (cloud, custom, local), Tool Runtime, Dual-Isolation Sandbox, Report Engine, and Organization Control Plane.',
           },
         },
         {
+          id: 'product-vision-architecture',
+          title: 'Kernel Base Architecture Overview',
+          body: 'The platform integrates twelve core architectural subsystems coordinated seamlessly under the Desktop IDE shell:',
+          mermaid: `graph TD
+    KB[Kernel Base Platform]
+    KB --> IDE[Desktop IDE]
+    KB --> Runtime[Agent Runtime]
+    KB --> Orch[Agent Orchestrator]
+    KB --> DAG[Task Graph / DAG Engine]
+    KB --> MG[Model Gateway]
+    KB --> Tools[Tool Runtime]
+    KB --> SB[Sandbox]
+    KB --> LocalMgr[Local Model Manager]
+    KB --> ProvGW[Provider Gateway]
+    KB --> WSMgr[Workspace Manager]
+    KB --> RepEngine[Report Engine]
+    KB --> SecLayer[Security Layer]
+    KB --> OrgPlane[Organization Control Plane]`,
+          diagramTitle: 'Kernel Base Subsystem Architecture Map',
+        },
+        {
           id: 'why-it-exists',
-          title: 'Why Does This Project Exist?',
-          body: 'Modern software engineering is too broad for a single context window. A real-world pull request requires architectural design, library evaluation, unit test execution, security review, and edge-case diagnosis. Single-agent models hit cognitive saturation and hallucinatory loops when attempting to hold all these responsibilities simultaneously. By decomposing tasks into a Directed Acyclic Graph (DAG) and assigning specialized tools and system prompts to distinct agents, the IDE achieves 4x higher task completion rates on complex refactoring tasks.',
+          title: 'Why Does Kernel Base Exist?',
+          body: 'Modern software engineering is too broad for a single context window. A real-world pull request requires architectural design, library evaluation, unit test execution, security review, and edge-case diagnosis. Single-agent models hit cognitive saturation and hallucinatory loops when attempting to hold all these responsibilities simultaneously. By decomposing tasks into a Directed Acyclic Graph (DAG) and assigning specialized tools and system prompts to distinct agents, Kernel Base achieves significantly higher task completion rates on complex engineering tasks.',
           table: {
-            headers: ['Dimension', 'Single-Agent Assistant (Legacy)', 'AI-Native Multi-Agent IDE'],
+            headers: ['Dimension', 'Single-Agent Assistant (Legacy)', 'Kernel Base Multi-Agent IDE'],
             rows: [
               ['Task Scope', 'Linear prompt/response, limited memory', 'Dynamic DAG decomposition with dependency tracking'],
-              ['Context Window', 'Monolithic (suffers catastrophic forgetting)', 'Scoped per agent (Planner, Coder, QA each get clean contexts)'],
+              ['Context Window', 'Monolithic (suffers catastrophic forgetting)', 'Scoped per agent — Planner, Coder, QA each get clean contexts'],
               ['Execution Safety', 'Executes directly on host or requires manual copy-paste', 'Isolated Docker sandbox with worktree branches & permission gates'],
-              ['Verification', 'Passive text generation without runtime feedback', 'Autonomous loop: compile -> test -> diagnose -> self-repair'],
-              ['Cost & Compute', 'Always burns expensive frontier models', 'Tiered routing: Local Ollama (free) -> OpenRouter -> Frontier'],
+              ['Verification', 'Passive text generation without runtime feedback', 'Autonomous loop: compile → test → diagnose → self-repair'],
+              ['Model Diversity', 'Locked to single proprietary cloud provider', 'Multi-Provider Model Gateway: Cloud, Custom Gateways, Local Ollama ($0/mo)'],
+              ['Team Execution', 'Single chat assistant', 'Predefined & custom Agent Teams collaborating in parallel'],
+              ['Report Output', 'Transient chat stream', 'Comprehensive Report Workspace (diffs, tests, security, costs)'],
+              ['Privacy & Governance', 'All data leaves machine', '100% Local-Only mode + Organization Control Plane & Audit Logs'],
             ],
           },
         },
@@ -45,19 +69,26 @@ export const getStartedPages: DocPage[] = [
           mermaid: `graph TD
     User([User Goal]) --> UI[Desktop IDE Interface]
     UI --> RM[Run Manager & Event Bus]
-    RM --> Orch[Orchestrator]
+    RM --> Orch[Agent Orchestrator]
     Orch --> DAG[Task Graph / DAG Engine]
     DAG --> Reg[Agent Capability Registry]
     Reg --> P[Planner Agent]
     Reg --> C[Coding Agent]
     Reg --> R[Research Agent]
     Reg --> QA[QA & Test Agent]
+    C --> MG[Model Gateway]
+    R --> MG
+    QA --> MG
+    MG --> Cloud[Cloud LLMs]
+    MG --> Custom[Custom Gateways]
+    MG --> Local[Local Models / Ollama]
     C --> SB[(Docker Sandbox)]
     QA --> SB
     SB --> Verif{Test Verification}
-    Verif -->|Pass| Report[PR & Summary Report]
+    Verif -->|Pass| Report[Report Workspace]
     Verif -->|Fail| Repair[Repair Diagnostic Loop]
-    Repair --> C`,
+    Repair --> C
+    Report --> Export[PR / Diff Export]`,
           diagramTitle: 'End-to-End Multi-Agent Orchestration Flow',
         },
         {
@@ -80,9 +111,24 @@ export const getStartedPages: DocPage[] = [
               badge: 'Protocol',
             },
             {
-              title: 'Zero-Cost Student Friendly',
-              description: 'Fully functional on 100% free open-source local models (Ollama, DeepSeek, Qwen) or free cloud tiers.',
-              badge: 'Accessibility',
+              title: 'Unified Model Gateway',
+              description: 'Single abstraction layer routing to cloud providers, custom enterprise gateways, or local Ollama models with no vendor lock-in.',
+              badge: 'Gateway',
+            },
+            {
+              title: 'Local AI First ($0 / mo)',
+              description: 'One-click local model installation via Ollama and Hugging Face. Hardware detection recommends optimal models for your machine.',
+              badge: 'Local AI',
+            },
+            {
+              title: 'Dedicated Report Workspace',
+              description: 'Consolidates all agent outputs, unified diffs, test logs, CVE audits, and token costs into an interactive review pane.',
+              badge: 'Reports',
+            },
+            {
+              title: 'Organization Control Plane',
+              description: 'Centralized policy enforcement, RBAC, spending budgets, private gateway distribution, and tamper-evident audit trails.',
+              badge: 'Enterprise',
             },
           ],
         },
@@ -90,7 +136,8 @@ export const getStartedPages: DocPage[] = [
       relatedPages: [
         { title: 'What is the AI-Native IDE?', slug: 'get-started/what-is-ai-native-ide' },
         { title: 'System Architecture', slug: 'architecture/system-architecture' },
-        { title: '10-Day MVP Plan', slug: '10-day-mvp/mvp-overview' },
+        { title: 'Agent Teams Overview', slug: 'agent-teams/overview' },
+        { title: 'Local AI Overview', slug: 'local-ai/overview' },
       ],
     },
   },
@@ -109,7 +156,7 @@ export const getStartedPages: DocPage[] = [
         {
           id: 'anatomy-of-workspace',
           title: 'Anatomy of the Workspace',
-          body: 'The IDE surface consists of five synchronized panels designed to expose full transparency into agent reasoning, code diffs, and verification metrics.',
+          body: 'The IDE surface consists of synchronized panels designed to expose full transparency into agent reasoning, code diffs, and verification metrics.',
           codeBlocks: [
             {
               filename: 'workspace-layout.txt',
@@ -180,6 +227,7 @@ export const getStartedPages: DocPage[] = [
               ['Planner', 'Decomposition, dependency analysis, risk assessment', 'read_project_tree, read_package_json', '4k tokens'],
               ['Researcher', 'Search, documentation synthesis, API reference', 'web_search, fetch_docs, mcp_query', '6k tokens'],
               ['Coder', 'High-density code generation, syntax adherence', 'read_file, edit_file, create_file', '8k tokens'],
+              ['Debugger', 'Root-cause diagnosis, stack trace analysis', 'terminal_exec, parse_stack, git_diff', '6k tokens'],
               ['QA & Tester', 'Pessimistic verification, edge-case generation', 'terminal_exec, npm_test, inspect_logs', '6k tokens'],
               ['Reviewer', 'Security, style guidelines, cyclomatic complexity', 'git_diff, ast_lint, security_audit', '5k tokens'],
             ],
@@ -195,14 +243,14 @@ export const getStartedPages: DocPage[] = [
   {
     slug: 'get-started/core-concepts',
     title: 'Core Concepts',
-    description: 'Fundamental building blocks of the AI-Native IDE: DAGs, Worktrees, MCP, and Sandboxes.',
+    description: 'Fundamental building blocks of Kernel Base: DAGs, Worktrees, Model Gateway, Sandboxes, and Report Workspace.',
     section: 'Get Started',
     category: 'Introduction',
     order: 4,
     checkedDate: 'September 2026',
-    tags: ['concepts', 'mcp', 'dag', 'sandbox'],
+    tags: ['concepts', 'mcp', 'dag', 'sandbox', 'reports'],
     content: {
-      lead: 'Master the fundamental primitives governing state, execution, and safety within the multi-agent IDE.',
+      lead: 'Master the fundamental primitives governing state, execution, model routing, and safety within Kernel Base.',
       sections: [
         {
           id: 'dag-concept',
@@ -210,8 +258,13 @@ export const getStartedPages: DocPage[] = [
           body: 'A Directed Acyclic Graph represents all subtasks required to achieve the user goal. Nodes denote discrete jobs (e.g., "Install bcrypt", "Create User schema", "Write authentication unit tests"). Edges represent strict execution dependencies.',
         },
         {
+          id: 'model-gateway-concept',
+          title: '2. Multi-Provider Model Gateway',
+          body: 'A unified abstraction layer allowing agents to seamlessly invoke frontier cloud providers (Claude 3.5 Sonnet, GPT-4o), custom enterprise LLM gateways, or local offline models (Ollama Qwen 2.5 Coder) without vendor lock-in.',
+        },
+        {
           id: 'agent-spec-concept',
-          title: '2. Agent Specification (AgentSpec)',
+          title: '3. Agent Specification (AgentSpec)',
           body: 'Every agent in the registry is defined by a declarative specification outlining its system prompt, tool access permissions, model tier, and credit allowance.',
           codeBlocks: [
             {
@@ -220,7 +273,7 @@ export const getStartedPages: DocPage[] = [
               code: `export interface AgentSpec {
   id: string;
   name: string;
-  role: 'planner' | 'coder' | 'researcher' | 'qa' | 'reviewer' | 'devops';
+  role: 'planner' | 'coder' | 'researcher' | 'qa' | 'reviewer' | 'devops' | 'debugger';
   systemPrompt: string;
   allowedTools: string[];
   modelTier: 'local' | 'free-cloud' | 'frontier';
@@ -237,13 +290,19 @@ export const getStartedPages: DocPage[] = [
         },
         {
           id: 'sandbox-concept',
-          title: '3. Docker Sandbox & Git Worktree',
+          title: '4. Docker Sandbox & Git Worktree',
           body: 'To prevent agents from modifying working branch code unintentionally, the IDE creates an isolated Git worktree mounted inside an ephemeral Docker container with resource constraints.',
+        },
+        {
+          id: 'report-workspace-concept',
+          title: '5. Report Workspace',
+          body: 'A dedicated post-run interface that automatically consolidates all agent logs, AST file diffs, test outputs, and security scans into an authoritative review pane.',
         },
       ],
       relatedPages: [
         { title: 'System Architecture', slug: 'architecture/system-architecture' },
-        { title: 'Credit System', slug: 'architecture/credit-system' },
+        { title: 'Model Gateway', slug: 'architecture/model-gateway' },
+        { title: 'Report Workspace', slug: 'workspace/report-workspace' },
       ],
     },
   },
@@ -257,7 +316,7 @@ export const getStartedPages: DocPage[] = [
     checkedDate: 'September 2026',
     tags: ['install', 'setup', 'cli', 'ollama'],
     content: {
-      lead: 'Get the AI-Native Multi-Agent IDE running locally in less than five minutes using open-source tools.',
+      lead: 'Get Kernel Base running locally in less than five minutes using open-source tools.',
       sections: [
         {
           id: 'prerequisites',
@@ -265,10 +324,10 @@ export const getStartedPages: DocPage[] = [
           table: {
             headers: ['Software', 'Minimum Version', 'Purpose', 'Free/Open Source?'],
             rows: [
-              ['Node.js', 'v18.0.0+ LTS (light) / v20.0.0+ LTS (recommended)', 'Desktop runtime & API orchestration', 'Yes (MIT)'],
+              ['Node.js', 'v18.0.0+ LTS / v20.0.0+ LTS (recommended)', 'Desktop runtime & API orchestration', 'Yes (MIT)'],
               ['Docker Engine', 'v24.0.0+', 'Container sandbox isolation', 'Yes (Apache 2.0)'],
               ['Git', 'v2.38.0+', 'Repository management & worktrees', 'Yes (GPLv2)'],
-              ['Ollama (Optional)', 'v0.5.0+', '100% offline local model inference', 'Yes (MIT)'],
+              ['Ollama (Optional)', 'v0.5.0+', '100% offline local model inference ($0/mo)', 'Yes (MIT)'],
             ],
           },
         },
@@ -278,8 +337,8 @@ export const getStartedPages: DocPage[] = [
           steps: [
             {
               title: 'Clone the Repository',
-              description: 'Clone the official open-source repository.',
-              code: 'git clone https://github.com/ai-native-ide/core.git\ncd core',
+              description: 'Clone the official Kernel Base repository.',
+              code: 'git clone https://github.com/kernel-base/kernel-base.git\ncd kernel-base',
               language: 'bash',
             },
             {
@@ -296,7 +355,7 @@ export const getStartedPages: DocPage[] = [
             },
             {
               title: 'Launch the Development Environment',
-              description: 'Start the orchestrator daemon and development web surface.',
+              description: 'Start the orchestrator daemon and development desktop interface.',
               code: 'npm run dev',
               language: 'bash',
             },
@@ -441,15 +500,15 @@ npm run package:win`,
               description: 'Test runner executes tests. If a test fails, the Repair Loop diagnoses the stack trace and commands the Coding Agent to patch the file.',
             },
             {
-              title: 'Human Review & Merge',
-              description: 'The IDE presents a clean unified diff with test logs and credit consumption stats for single-click git merge.',
+              title: 'Human Review in Report Workspace',
+              description: 'The Report Workspace presents a clean unified diff with test logs, security audit, and credit consumption stats for single-click git merge.',
             },
           ],
         },
       ],
       relatedPages: [
         { title: 'Autonomous Execution', slug: 'autonomy/autonomous-execution' },
-        { title: 'Autonomous Test Loop', slug: 'autonomy/test-loop' },
+        { title: 'Report Workspace', slug: 'workspace/report-workspace' },
       ],
     },
   },

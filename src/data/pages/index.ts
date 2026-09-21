@@ -2,32 +2,42 @@ import { DocPage } from '../../types/docs';
 import { getStartedPages } from './getStarted';
 import { architecturePages } from './architecture';
 import { agentsPages } from './agents';
+import { agentTeamsPages } from './agentTeams';
 import { autonomyPages } from './autonomy';
 import { modelsPages } from './models';
+import { localAiPages } from './localAi';
 import { toolsPages } from './tools';
 import { desktopPages } from './desktop';
+import { workspacePages } from './workspace';
 import { freeTechStackPages } from './freeTechStack';
 import { buildPages } from './build';
 import { mvp10DayPages } from './mvp10Day';
 import { researchPages } from './research';
 import { resourcesPages } from './resources';
 import { roadmapPages } from './roadmap';
+import { organizationPages } from './organization';
+import { adrPages } from './adr';
 import { referencePages } from './reference';
 
 export const ALL_DOC_PAGES: DocPage[] = [
   ...getStartedPages,
   ...architecturePages,
   ...agentsPages,
+  ...agentTeamsPages,
   ...autonomyPages,
   ...modelsPages,
+  ...localAiPages,
   ...toolsPages,
   ...desktopPages,
+  ...workspacePages,
   ...freeTechStackPages,
   ...buildPages,
   ...mvp10DayPages,
   ...researchPages,
   ...resourcesPages,
   ...roadmapPages,
+  ...organizationPages,
+  ...adrPages,
   ...referencePages,
 ];
 

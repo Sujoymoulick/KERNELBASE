@@ -6,43 +6,76 @@ export const modelsPages: DocPage[] = [
     title: 'Model Architecture',
     description: 'The three-tier model hierarchy balancing zero-cost local execution with frontier cloud intelligence.',
     section: 'Models',
-    category: 'Model Routing',
+    category: 'Model Routing & Gateway',
     order: 1,
     checkedDate: 'September 2026',
-    tags: ['models', 'architecture', 'tiers', 'routing'],
+    tags: ['models', 'architecture', 'tiers', 'routing', 'gateway'],
     content: {
-      lead: 'The IDE structures model consumption into three clear tiers, ensuring students and open-source contributors can build complex software for $0/month.',
+      lead: 'Kernel Base structures model consumption across a decoupled Multi-Provider Model Gateway, supporting cloud providers, custom enterprise endpoints, and 100% offline local models.',
       interactiveComponent: 'credit-calculator',
       sections: [
         {
-          id: 'three-tier-model',
-          title: 'The Three-Tier Model Strategy',
-          body: 'Rather than binding every task to a $20/million-token frontier model, tasks are routed according to cognitive complexity.',
+          id: 'model-gateway-topology',
+          title: 'Unified Model Gateway Topology',
+          body: 'Rather than binding agents directly to a single vendor, the Model Gateway routes requests dynamically based on task requirements, cognitive complexity, data sensitivity, and cost constraints.',
           mermaid: `graph TD
-    Task([Subtask]) --> Router{Model Router}
-    Router -->|Simple / Summarize / Format| T1[Tier 1: Local Offline\nOllama / Qwen 2.5 Coder 7B\nCost: $0.00]
-    Router -->|Standard Code / QA / Refactor| T2[Tier 2: Free/Low-Cost Cloud\nOpenRouter / DeepSeek / Mistral\nCost: Free or <$0.001]
-    Router -->|High Ambiguity / Complex Debug| T3[Tier 3: Frontier Model\nUser Configured Claude / GPT-4o\nCost: User Key]`,
-          diagramTitle: 'Three-Tier Routing Architecture',
+    Agents[Autonomous Agents] --> GW[Kernel Base Model Gateway]
+    GW --> Router[Cognitive & Policy Router]
+    Router --> Cloud[1. Cloud Providers\nOpenAI, Anthropic, Google, OpenRouter, Together]
+    Router --> Custom[2. Custom LLM Gateways\nInternal vLLM, Azure OpenAI, Corporate Proxies]
+    Router --> Local[3. Local Models\nOllama, llama.cpp, LM Studio, GGUF]`,
+          diagramTitle: 'Multi-Provider Model Gateway Architecture'
         },
+        {
+          id: 'unified-abstraction-spec',
+          title: 'Unified Model Interface Contract',
+          codeBlocks: [
+            {
+              filename: 'types/model-gateway.ts',
+              language: 'typescript',
+              code: `export interface ModelProvider {
+  id: string;
+  name: string;
+  type: 'cloud' | 'local' | 'custom';
+  apiBase?: string;
+  models: ModelMetadata[];
+}
+
+export interface ModelMetadata {
+  id: string;
+  providerId: string;
+  displayName: string;
+  contextWindow: number;
+  capabilities: ('code' | 'reasoning' | 'tools' | 'vision' | 'streaming')[];
+  supportsTools: boolean;
+  supportsVision: boolean;
+  supportsStreaming: boolean;
+  costPer1kInputTokensUsd: number;
+  costPer1kOutputTokensUsd: number;
+  isLocal: boolean;
+}`
+            }
+          ]
+        }
       ],
       relatedPages: [
         { title: 'Model Router & Gateway', slug: 'models/model-router' },
-        { title: 'Local & Free Models', slug: 'models/local-free-models' },
-      ],
-    },
+        { title: 'Custom LLM Gateways', slug: 'models/custom-providers' },
+        { title: 'Automatic Model Selection', slug: 'models/automatic-model-selection' }
+      ]
+    }
   },
   {
     slug: 'models/model-router',
     title: 'Model Router & Gateway',
     description: 'Dynamic model dispatching, latency-aware load balancing, and automated provider fallbacks.',
     section: 'Models',
-    category: 'Model Routing',
+    category: 'Model Routing & Gateway',
     order: 2,
     checkedDate: 'September 2026',
-    tags: ['router', 'gateway', 'load-balancer'],
+    tags: ['router', 'gateway', 'load-balancer', 'fallbacks'],
     content: {
-      lead: 'The Model Router evaluates token counts, rate limits, and latency to route requests to the most efficient available endpoint.',
+      lead: 'The Model Router evaluates token counts, required capabilities, latency, and budget ceilings to route requests to the most efficient endpoint.',
       sections: [
         {
           id: 'router-rules',
@@ -54,23 +87,130 @@ export const modelsPages: DocPage[] = [
               ['Code Writing', 'Long context, 90%+ HumanEval code', 'openrouter/deepseek-coder-v2', 'ollama/deepseek-r1:8b'],
               ['Test Generation', 'Edge case generation, AST syntax', 'openrouter/mistral-small', 'ollama/qwen2.5-coder:7b'],
               ['Security Review', 'Deep reasoning, security rules', 'openrouter/deepseek-r1', 'ollama/qwen2.5-coder:14b'],
-            ],
-          },
-        },
+              ['Failure Diagnosis', 'Stack trace analysis, reasoning', 'ollama/deepseek-r1:8b', 'anthropic/claude-3-5-sonnet']
+            ]
+          }
+        }
       ],
       relatedPages: [
         { title: 'LiteLLM Integration', slug: 'models/litellm' },
-        { title: 'Model Selection & Fallbacks', slug: 'models/model-selection' },
+        { title: 'Model Selection & Fallbacks', slug: 'models/model-selection' }
+      ]
+    }
+  },
+  {
+    slug: 'models/custom-providers',
+    title: 'Custom LLM Gateways & Endpoints',
+    description: 'Connecting internal enterprise AI infrastructure, self-hosted inference servers, and custom OpenAI-compatible proxies.',
+    section: 'Models',
+    category: 'Model Routing & Gateway',
+    order: 3,
+    checkedDate: 'September 2026',
+    tags: ['custom-providers', 'enterprise', 'vllm', 'openai-compatible', 'gateways'],
+    content: {
+      lead: 'Kernel Base allows users and organizations to connect custom OpenAI-compatible API gateways, internal vLLM servers, private cloud instances, and proprietary enterprise endpoints.',
+      sections: [
+        {
+          id: 'custom-gateway-config',
+          title: 'Custom Provider Configuration',
+          body: 'Custom providers can be configured per workspace (`.ai-ide/providers.json`) or distributed globally through the Organization Control Plane.',
+          codeBlocks: [
+            {
+              filename: 'config/custom-provider.json',
+              language: 'json',
+              code: `{
+  "providerId": "corp-vllm-cluster",
+  "name": "Internal Enterprise vLLM Cluster",
+  "type": "custom",
+  "apiBase": "https://ai-gateway.internal.corp/v1",
+  "apiKey": "${`\${env:CORP_AI_TOKEN}`}",
+  "authMethod": "bearer",
+  "customHeaders": {
+    "X-Corporate-Dept": "Engineering",
+    "X-Security-Clearance": "Confidential"
+  },
+  "models": [
+    {
+      "id": "corp-deepseek-671b",
+      "displayName": "Corporate DeepSeek V3 (Private)",
+      "contextWindow": 65536,
+      "supportsTools": true,
+      "supportsStreaming": true,
+      "costPer1kInputTokensUsd": 0.00,
+      "costPer1kOutputTokensUsd": 0.00
+    }
+  ],
+  "rateLimits": {
+    "maxRequestsPerMinute": 120,
+    "maxConcurrentStreams": 8
+  }
+}`
+            }
+          ]
+        },
+        {
+          id: 'enterprise-use-cases',
+          title: 'Supported Enterprise Architectures',
+          table: {
+            headers: ['Architecture', 'Implementation', 'Authentication', 'Ideal For'],
+            rows: [
+              ['Self-Hosted vLLM / TGI', 'Dedicated on-prem GPU cluster', 'Static API Key / mTLS', 'Strict air-gapped data sovereignty'],
+              ['Azure OpenAI Service', 'Managed Microsoft Azure instance', 'Azure AD OAuth / API Key', 'Enterprise cloud compliance'],
+              ['AWS Bedrock Gateway', 'Amazon Bedrock proxy adapter', 'AWS IAM SigV4 / Role ARN', 'AWS-native enterprise teams'],
+              ['Corporate Proxy', 'Internal caching & logging proxy', 'Single Sign-On (SSO) Bearer Token', 'Centralized token audit & billing']
+            ]
+          }
+        }
       ],
-    },
+      relatedPages: [
+        { title: 'Provider Management', slug: 'organization/provider-management' },
+        { title: 'Automatic Model Selection', slug: 'models/automatic-model-selection' }
+      ]
+    }
+  },
+  {
+    slug: 'models/automatic-model-selection',
+    title: 'Automatic Model Selection Engine',
+    description: 'How agents declare capability requirements and the Model Gateway dynamically chooses the optimal model.',
+    section: 'Models',
+    category: 'Model Routing & Gateway',
+    order: 4,
+    checkedDate: 'September 2026',
+    tags: ['model-selection', 'capabilities', 'automatic', 'modes'],
+    content: {
+      lead: 'Rather than binding agents to static model names, agents in Kernel Base declare semantic capability requirements (e.g., "high-speed coding with tool support"). The Model Gateway evaluates availability, hardware, budget, and privacy policies to pick the best model.',
+      sections: [
+        {
+          id: 'selection-modes',
+          title: 'Three Selection Modes',
+          table: {
+            headers: ['Mode', 'Description', 'Configured By', 'Behavior'],
+            rows: [
+              ['Automatic (Default)', 'System evaluates task type, latency, cost, and selects best matching model', 'Kernel Base Router', 'Picks local model when available, escalates to cloud on high ambiguity'],
+              ['Manual Override', 'User explicitly locks agent or task to a specific model identifier', 'Developer in IDE UI', 'Strict enforcement; no automatic tier shifts'],
+              ['Policy-Based', 'Organization enforces approved provider lists and spend ceilings', 'Organization Admin', 'Rejects non-compliant models; forces local on sensitive tags']
+            ]
+          }
+        },
+        {
+          id: 'capability-matching-matrix',
+          title: 'Capability Matching Criteria',
+          body: 'When an agent requests inference, the gateway weighs: 1) Required tools & vision support, 2) Necessary context window depth, 3) Token cost budget, 4) Latency/throughput needs, 5) Privacy constraint (local vs cloud).'
+        }
+      ],
+      relatedPages: [
+        { title: 'Model Selection & Fallbacks', slug: 'models/model-selection' },
+        { title: 'Resource & AI Limits', slug: 'models/resource-limits' }
+      ]
+    }
   },
   {
     slug: 'models/litellm',
     title: 'LiteLLM Integration',
     description: 'Universal proxy abstraction supporting 100+ LLMs with unified OpenAI-compatible formatting.',
     section: 'Models',
-    category: 'Model Routing',
-    order: 3,
+    category: 'Model Routing & Gateway',
+    order: 5,
     checkedDate: 'September 2026',
     tags: ['litellm', 'proxy', 'openai-compatible'],
     content: {
@@ -111,8 +251,8 @@ export const modelsPages: DocPage[] = [
     title: 'Ollama (Local Tier 1)',
     description: 'Running open-source weights locally for 100% offline, private, zero-cost agent intelligence.',
     section: 'Models',
-    category: 'Model Routing',
-    order: 4,
+    category: 'Model Routing & Gateway',
+    order: 6,
     checkedDate: 'September 2026',
     tags: ['ollama', 'local-ai', 'privacy', 'offline'],
     content: {
@@ -134,6 +274,7 @@ export const modelsPages: DocPage[] = [
       ],
       relatedPages: [
         { title: 'Local & Free Models', slug: 'models/local-free-models' },
+        { title: 'Local AI Overview', slug: 'local-ai/overview' }
       ],
     },
   },
@@ -142,8 +283,8 @@ export const modelsPages: DocPage[] = [
     title: 'OpenRouter (Tier 2 Cloud)',
     description: 'Accessing dozens of free-tier and micro-cost cloud models with zero recurring commitment.',
     section: 'Models',
-    category: 'Model Routing',
-    order: 5,
+    category: 'Model Routing & Gateway',
+    order: 7,
     checkedDate: 'September 2026',
     tags: ['openrouter', 'free-tier', 'cloud'],
     content: {
@@ -169,8 +310,8 @@ export const modelsPages: DocPage[] = [
     title: 'Local & Free Models',
     description: 'Curated list of verified open-weight models optimized for coding, tool use, and structured outputs.',
     section: 'Models',
-    category: 'Cost & Selection',
-    order: 6,
+    category: 'Cost & Resource Controls',
+    order: 8,
     checkedDate: 'September 2026',
     tags: ['free-models', 'open-weights', 'benchmarks'],
     content: {
@@ -200,8 +341,8 @@ export const modelsPages: DocPage[] = [
     title: 'Model Selection & Fallbacks',
     description: 'Automated fallback chains: how the IDE handles network outages, rate limits, and model degradations.',
     section: 'Models',
-    category: 'Cost & Selection',
-    order: 7,
+    category: 'Cost & Resource Controls',
+    order: 9,
     checkedDate: 'September 2026',
     tags: ['fallbacks', 'resilience', 'rate-limits'],
     content: {
@@ -223,8 +364,8 @@ export const modelsPages: DocPage[] = [
     title: 'Token & Cost Management',
     description: 'Real-time token counting, caching, cost estimation, and spend guardrails.',
     section: 'Models',
-    category: 'Cost & Selection',
-    order: 8,
+    category: 'Cost & Resource Controls',
+    order: 10,
     checkedDate: 'September 2026',
     tags: ['tokens', 'cost', 'caching', 'spend-guardrails'],
     content: {
@@ -237,17 +378,61 @@ export const modelsPages: DocPage[] = [
         },
       ],
       relatedPages: [
+        { title: 'Resource & AI Limits', slug: 'models/resource-limits' },
         { title: 'Credit Calculation Engine', slug: 'models/credit-calculation' },
       ],
     },
+  },
+  {
+    slug: 'models/resource-limits',
+    title: 'Resource & AI Usage Limits',
+    description: 'Comprehensive guardrails: token limits, concurrency caps, tool call throttling, and hardware memory protections.',
+    section: 'Models',
+    category: 'Cost & Resource Controls',
+    order: 11,
+    checkedDate: 'September 2026',
+    tags: ['limits', 'quotas', 'throttling', 'budget', 'runaway-prevention'],
+    content: {
+      lead: 'Kernel Base implements multi-tier resource limits to prevent runaway loops, exorbitant API bills, and host machine memory exhaustion.',
+      sections: [
+        {
+          id: 'hierarchical-limits-matrix',
+          title: 'Hierarchical Limit Enforcements',
+          table: {
+            headers: ['Scope', 'Enforced Limits', 'Default Setting', 'Action When Exceeded'],
+            rows: [
+              ['Global / System', 'Max concurrent active agent runs', '3 active runs', 'Queues subsequent run requests'],
+              ['Organization', 'Monthly budget ceiling ($ USD)', '$1,000 / month', 'Blocks cloud API calls, falls back to local Ollama'],
+              ['Workspace / Project', 'Max credits per project lifecycle', '10,000 credits', 'Prompts project owner for quota top-up'],
+              ['Run / Session', 'Max credit allowance & duration', '200 credits / 30 mins', 'Pauses run, alerts developer in UI'],
+              ['Agent Subtask', 'Max retries & max token burn', '3 retries / 15k tokens', 'Escalates failure diagnostic to human'],
+              ['Local Hardware', 'Max RAM / VRAM allocation', '80% available memory', 'Throttles concurrency, pages out idle weights']
+            ]
+          }
+        },
+        {
+          id: 'runaway-mitigation',
+          title: 'Preventing Runaway Agents & Infinite Loops',
+          callout: {
+            type: 'warning',
+            title: 'Loop Detection Circuit Breaker',
+            text: 'If an agent generates two identical code diffs consecutively or executes 5 tool calls without modifying file state or running tests, the Orchestrator trips the circuit breaker and pauses execution.'
+          }
+        }
+      ],
+      relatedPages: [
+        { title: 'Token & Cost Management', slug: 'models/token-cost-management' },
+        { title: 'Credit & Budget System', slug: 'architecture/credit-system' }
+      ]
+    }
   },
   {
     slug: 'models/credit-calculation',
     title: 'Credit Calculation Engine',
     description: 'Mathematical formulas converting input tokens, output tokens, and tool invocations into credits.',
     section: 'Models',
-    category: 'Cost & Selection',
-    order: 9,
+    category: 'Cost & Resource Controls',
+    order: 12,
     checkedDate: 'September 2026',
     tags: ['credits', 'formula', 'accounting'],
     content: {

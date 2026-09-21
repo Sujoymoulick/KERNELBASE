@@ -68,7 +68,7 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
   {
     id: 'agents',
     title: 'Agents',
-    badge: '11 Agents',
+    badge: 'Catalog',
     items: [
       {
         title: 'Agent Directory',
@@ -77,22 +77,43 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
           { title: 'Planner Agent', slug: 'agents/planner-agent' },
           { title: 'Orchestrator Agent', slug: 'agents/orchestrator-agent' },
           { title: 'Coding Agent', slug: 'agents/coding-agent' },
+          { title: 'Debugger Agent', slug: 'agents/debugger-agent' },
           { title: 'Research Agent', slug: 'agents/research-agent' },
           { title: 'Data Analyst Agent', slug: 'agents/data-analyst-agent' },
-          { title: 'QA Agent', slug: 'agents/qa-agent' },
-          { title: 'Reviewer Agent', slug: 'agents/reviewer-agent' },
-          { title: 'DevOps Agent', slug: 'agents/devops-agent' },
+          { title: 'QA & Testing Agent', slug: 'agents/qa-agent' },
+          { title: 'Code Review Agent', slug: 'agents/reviewer-agent' },
           { title: 'Security Agent', slug: 'agents/security-agent' },
+          { title: 'UI/UX Agent', slug: 'agents/ui-ux-agent' },
+          { title: 'SEO Agent', slug: 'agents/seo-agent' },
           { title: 'Documentation Agent', slug: 'agents/documentation-agent' },
+          { title: 'DevOps Agent', slug: 'agents/devops-agent' },
+          { title: 'Report Agent', slug: 'agents/report-agent' },
         ],
       },
       {
-        title: 'Custom Agents',
+        title: 'Custom Agents & Config',
         items: [
           { title: 'Creating Custom Agents', slug: 'agents/creating-custom-agents' },
           { title: 'Capability Registry', slug: 'agents/capability-registry' },
           { title: 'Agent Permissions', slug: 'agents/agent-permissions' },
           { title: 'Context Management', slug: 'agents/agent-context-management' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'agent-teams',
+    title: 'Agent Teams',
+    badge: 'Teams',
+    items: [
+      {
+        title: 'Team System',
+        items: [
+          { title: 'Agent Teams Overview', slug: 'agent-teams/overview' },
+          { title: 'Predefined Teams', slug: 'agent-teams/predefined-teams' },
+          { title: 'Custom Teams', slug: 'agent-teams/custom-teams' },
+          { title: 'Team Execution Flow', slug: 'agent-teams/team-execution' },
+          { title: 'Collaboration Patterns', slug: 'agent-teams/collaboration-patterns' },
         ],
       },
     ],
@@ -133,25 +154,48 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
   {
     id: 'models',
     title: 'Models',
-    badge: '3-Tier',
+    badge: 'Gateway',
     items: [
       {
-        title: 'Model Routing',
+        title: 'Model Routing & Gateway',
         items: [
           { title: 'Model Architecture', slug: 'models/model-architecture' },
           { title: 'Model Router & Gateway', slug: 'models/model-router' },
+          { title: 'Custom LLM Gateways', slug: 'models/custom-providers' },
+          { title: 'Automatic Model Selection', slug: 'models/automatic-model-selection' },
           { title: 'LiteLLM Integration', slug: 'models/litellm' },
           { title: 'Ollama (Local Tier 1)', slug: 'models/ollama' },
           { title: 'OpenRouter (Tier 2 Cloud)', slug: 'models/openrouter' },
         ],
       },
       {
-        title: 'Cost & Selection',
+        title: 'Cost & Resource Controls',
         items: [
           { title: 'Local & Free Models', slug: 'models/local-free-models' },
           { title: 'Model Selection & Fallbacks', slug: 'models/model-selection' },
           { title: 'Token & Cost Management', slug: 'models/token-cost-management' },
+          { title: 'Resource & AI Limits', slug: 'models/resource-limits' },
           { title: 'Credit Calculation Engine', slug: 'models/credit-calculation' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'local-ai',
+    title: 'Local AI',
+    badge: 'On-Device',
+    items: [
+      {
+        title: 'Local Model Manager',
+        items: [
+          { title: 'Local AI Overview', slug: 'local-ai/overview' },
+          { title: 'Hardware Detection & Profiling', slug: 'local-ai/hardware-detection' },
+          { title: 'Model Discovery & Installation', slug: 'local-ai/model-discovery' },
+          { title: 'Ollama Runtime Integration', slug: 'local-ai/ollama-runtime' },
+          { title: 'Hugging Face Integration', slug: 'local-ai/huggingface' },
+          { title: 'llama.cpp & Other Runtimes', slug: 'local-ai/llama-cpp' },
+          { title: 'Automatic Model Recommendations', slug: 'local-ai/model-recommendations' },
+          { title: 'Health & Resource Monitoring', slug: 'local-ai/health-monitoring' },
         ],
       },
     ],
@@ -202,6 +246,29 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
           { title: 'Agent Activity & Task Panel', slug: 'desktop/agent-manager' },
           { title: 'Project & Credit Logs', slug: 'desktop/project-manager' },
           { title: 'Desktop Security Model', slug: 'desktop/desktop-security' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'workspace',
+    title: 'Workspace',
+    badge: 'Reports',
+    items: [
+      {
+        title: 'Project Workspace',
+        items: [
+          { title: 'Workspace Architecture Overview', slug: 'workspace/overview' },
+          { title: 'Task Management & Lifecycle', slug: 'workspace/task-management' },
+          { title: 'Artifact Architecture & Management', slug: 'workspace/artifact-system' },
+        ],
+      },
+      {
+        title: 'Report Workspace',
+        items: [
+          { title: 'Report Workspace', slug: 'workspace/report-workspace' },
+          { title: 'Report Generation Engine', slug: 'workspace/report-generation' },
+          { title: 'Report Export & Integrations', slug: 'workspace/report-export' },
         ],
       },
     ],
@@ -317,6 +384,53 @@ export const NAVIGATION_SECTIONS: NavSection[] = [
           { title: 'Release Milestones (MVP → v1.0)', slug: 'roadmap/release-milestones' },
           { title: 'Desktop & Cloud Collaboration', slug: 'roadmap/desktop-cloud' },
           { title: 'Agent Marketplace & A2A Protocol', slug: 'roadmap/marketplace-a2a' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'organization',
+    title: 'Organization',
+    badge: 'Enterprise',
+    items: [
+      {
+        title: 'Team Management',
+        items: [
+          { title: 'Organization Overview', slug: 'organization/overview' },
+          { title: 'Members, Roles & Teams', slug: 'organization/members-teams' },
+          { title: 'Organization Policies', slug: 'organization/policies' },
+          { title: 'Model & Provider Management', slug: 'organization/provider-management' },
+        ],
+      },
+      {
+        title: 'Compliance & Security',
+        items: [
+          { title: 'Usage, Token & Cost Tracking', slug: 'organization/usage-tracking' },
+          { title: 'Audit Logging & Compliance', slug: 'organization/audit-logs' },
+          { title: 'Privacy & Local-Only Architecture', slug: 'organization/privacy' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'adr',
+    title: 'ADRs',
+    badge: 'Decisions',
+    items: [
+      {
+        title: 'Architecture Decisions',
+        items: [
+          { title: 'ADR Index', slug: 'adr/index' },
+          { title: 'ADR-001 Multi-Agent Architecture', slug: 'adr/adr-001' },
+          { title: 'ADR-002 Model Gateway Abstraction', slug: 'adr/adr-002' },
+          { title: 'ADR-003 Local Model Support', slug: 'adr/adr-003' },
+          { title: 'ADR-004 Task DAG Engine', slug: 'adr/adr-004' },
+          { title: 'ADR-005 Tool Permission System', slug: 'adr/adr-005' },
+          { title: 'ADR-006 Sandbox Architecture', slug: 'adr/adr-006' },
+          { title: 'ADR-007 Report Workspace', slug: 'adr/adr-007' },
+          { title: 'ADR-008 Organization Architecture', slug: 'adr/adr-008' },
+          { title: 'ADR-009 Human Approval Checkpoints', slug: 'adr/adr-009' },
+          { title: 'ADR-010 Provider Abstraction', slug: 'adr/adr-010' },
         ],
       },
     ],

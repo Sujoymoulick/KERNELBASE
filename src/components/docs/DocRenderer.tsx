@@ -53,7 +53,7 @@ export const DocRenderer: React.FC<DocRendererProps> = ({ page, onNavigate, isDa
       case 'desktop-comparison':
         return <DesktopComparison />;
       case 'architecture-diagram':
-        return <ArchitectureDiagram isDark={isDark} />;
+        return <ArchitectureDiagram isDark={isDark} onNavigate={onNavigate} />;
       case 'cloudflare-primitives':
         return <CloudflarePrimitivesCard />;
       default:
