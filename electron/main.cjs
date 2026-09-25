@@ -6,6 +6,30 @@ app.name = 'Kernel Base Docs';
 
 let mainWindow = null;
 
+// Supported platforms: Linux (native / WSLg) and Windows host (WSL integration)
+const isSupportedPlatform = process.platform === 'linux' || process.platform === 'win32';
+
+if (!isSupportedPlatform) {
+  console.error(`Kernel Base is a Linux and WSL application and cannot run on platform "${process.platform}".`);
+  app.whenReady().then(() => {
+    dialog.showErrorBox(
+      'Platform Not Supported',
+      `Kernel Base is designed for Linux and WSL (Windows Subsystem for Linux) environments. Current platform (${process.platform}) is not supported.`
+    );
+    app.quit();
+  });
+}
+
+// Disable GPU hardware acceleration and DBus warnings in WSL / Linux VM environments
+const isWSL = Boolean(process.env.WSL_DISTRO_NAME) || Boolean(process.env.WSL_INTEROP);
+if (isWSL || process.platform === 'linux') {
+  app.disableHardwareAcceleration();
+  app.commandLine.appendSwitch('disable-gpu');
+  app.commandLine.appendSwitch('disable-gpu-compositing');
+  app.commandLine.appendSwitch('disable-software-rasterizer');
+  app.commandLine.appendSwitch('password-store', 'basic');
+}
+
 // Ensure single instance
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
@@ -273,7 +297,5 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  app.quit();
 });

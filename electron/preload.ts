@@ -7,21 +7,37 @@ export const KERNEL_BASE_API = {
     writeFile: (filePath: string, content: string) => ipcRenderer.invoke('fs:writeFile', filePath, content),
     createFile: (filePath: string, content?: string) => ipcRenderer.invoke('fs:createFile', filePath, content),
     createDirectory: (dirPath: string) => ipcRenderer.invoke('fs:createDirectory', dirPath),
+    createDir: (dirPath: string) => ipcRenderer.invoke('fs:createDirectory', dirPath),
     deletePath: (targetPath: string) => ipcRenderer.invoke('fs:deletePath', targetPath),
     renamePath: (oldPath: string, newPath: string) => ipcRenderer.invoke('fs:renamePath', oldPath, newPath),
     listDirectory: (dirPath: string, depth?: number) => ipcRenderer.invoke('fs:listDirectory', dirPath, depth),
+    readDir: async (dirPath: string, _recursive?: boolean) => {
+      const res = await ipcRenderer.invoke('fs:listDirectory', dirPath);
+      return Array.isArray(res) ? res : (res?.data || []);
+    },
     stat: (targetPath: string) => ipcRenderer.invoke('fs:stat', targetPath),
     revealInFinder: (targetPath: string) => ipcRenderer.invoke('fs:revealInFinder', targetPath),
   },
 
   // Terminal
   terminal: {
-    create: (options?: { id?: string; cwd?: string; shell?: string }) => ipcRenderer.invoke('terminal:create', options),
+    create: (options?: { id?: string; cwd?: string; shell?: string } | string, cwd?: string) => {
+      const opts = typeof options === 'string' ? { id: options, cwd } : options;
+      return ipcRenderer.invoke('terminal:create', opts);
+    },
     write: (id: string, data: string) => ipcRenderer.invoke('terminal:write', id, data),
     resize: (id: string, cols: number, rows: number) => ipcRenderer.invoke('terminal:resize', id, cols, rows),
     kill: (id: string) => ipcRenderer.invoke('terminal:kill', id),
-    onData: (callback: (payload: { id: string; data: string }) => void) => {
-      const listener = (_: any, payload: { id: string; data: string }) => callback(payload);
+    close: (id: string) => ipcRenderer.invoke('terminal:kill', id),
+    onData: (arg1: any, arg2?: any) => {
+      const callback = typeof arg1 === 'function' ? arg1 : arg2;
+      const targetId = typeof arg1 === 'string' ? arg1 : null;
+      const listener = (_: any, payload: { id: string; data: string }) => {
+        if (!targetId || payload.id === targetId) {
+          if (typeof arg1 === 'function') callback(payload);
+          else callback(payload.data);
+        }
+      };
       ipcRenderer.on('terminal:data', listener);
       return () => ipcRenderer.removeListener('terminal:data', listener);
     },
@@ -102,6 +118,16 @@ export const KERNEL_BASE_API = {
     selectFolder: () => ipcRenderer.invoke('workspace:selectFolder'),
     openFolder: (dirPath: string) => ipcRenderer.invoke('workspace:openFolder', dirPath),
     getRecent: () => ipcRenderer.invoke('workspace:getRecent'),
+    get: async () => {
+      try {
+        const recent = await ipcRenderer.invoke('workspace:getRecent');
+        const rootPath = (Array.isArray(recent) && recent[0]) ? recent[0] : (process.cwd ? process.cwd() : '/workspace');
+        return { rootPath, name: 'Kernel Base Workspace', projectType: 'node' };
+      } catch {
+        return { rootPath: '/workspace', name: 'Kernel Base Workspace', projectType: 'node' };
+      }
+    },
+    set: (dirPath: string) => ipcRenderer.invoke('workspace:openFolder', dirPath),
     detectProject: (dirPath: string) => ipcRenderer.invoke('workspace:detectProject', dirPath),
     saveState: (workspacePath: string, state: any) => ipcRenderer.invoke('workspace:saveState', workspacePath, state),
     loadState: (workspacePath: string) => ipcRenderer.invoke('workspace:loadState', workspacePath),
@@ -122,6 +148,8 @@ export const KERNEL_BASE_API = {
     getSecret: (key: string) => ipcRenderer.invoke('settings:getSecret', key),
     setSecret: (key: string, value: string) => ipcRenderer.invoke('settings:setSecret', key, value),
     deleteSecret: (key: string) => ipcRenderer.invoke('settings:deleteSecret', key),
+    getKeychainSecret: (service: string, account: string) => ipcRenderer.invoke('settings:getSecret', `${service}:${account}`),
+    setKeychainSecret: (service: string, account: string, secret: string) => ipcRenderer.invoke('settings:setSecret', `${service}:${account}`, secret),
   },
 
   // System & Dialogs

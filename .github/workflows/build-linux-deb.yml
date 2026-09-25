@@ -1,0 +1,54 @@
+name: Build Linux Packages (.deb / .rpm / .zip)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install System Dependencies for Debian / RPM Packaging
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg rpm fakeroot build-essential
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Build Renderer and Electron Main
+        run: npm run build
+
+      - name: Package Linux IDE (.deb, .rpm, .zip)
+        run: npm run make:linux
+
+      - name: Upload Debian Package (.deb)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-base-deb-package
+          path: out/make/deb/x64/*.deb
+
+      - name: Upload RPM Package (.rpm)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-base-rpm-package
+          path: out/make/rpm/x64/*.rpm
+
+      - name: Upload Linux Zip Bundle (.zip)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-base-linux-zip
+          path: out/make/zip/linux/x64/*.zip

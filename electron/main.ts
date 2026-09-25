@@ -13,10 +13,39 @@ import { registerSettingsIPC } from './ipc/settings.ipc';
 import { registerIndexingIPC } from './ipc/indexing.ipc';
 import { setupNativeMenu } from './menu';
 
-// __dirname is provided globally in CommonJS build
+// Supported platforms: Linux (native / WSLg) and Windows host (WSL integration)
+const isSupportedPlatform = process.platform === 'linux' || process.platform === 'win32';
 
-// Disable GPU hardware acceleration issues in some VMs/environments if needed
-app.commandLine.appendSwitch('enable-features', 'Metal');
+if (!isSupportedPlatform) {
+  console.error(`Kernel Base is a Linux and WSL application and cannot run on platform "${process.platform}".`);
+  app.whenReady().then(() => {
+    dialog.showErrorBox(
+      'Platform Not Supported',
+      `Kernel Base is designed for Linux and WSL (Windows Subsystem for Linux) environments. Current platform (${process.platform}) is not supported.`
+    );
+    app.quit();
+  });
+}
+
+// Disable GPU hardware acceleration, DBus warnings, and AT-SPI bridge in WSL / Linux environments
+process.env.NO_AT_BRIDGE = '1';
+
+const isWSL = Boolean(process.env.WSL_DISTRO_NAME) || Boolean(process.env.WSL_INTEROP);
+if (isWSL || process.platform === 'linux') {
+  app.disableHardwareAcceleration();
+  app.commandLine.appendSwitch('disable-gpu');
+  app.commandLine.appendSwitch('disable-gpu-sandbox');
+  app.commandLine.appendSwitch('disable-gpu-compositing');
+  app.commandLine.appendSwitch('disable-software-rasterizer');
+  app.commandLine.appendSwitch('disable-dev-shm-usage');
+  app.commandLine.appendSwitch('password-store', 'basic');
+  app.commandLine.appendSwitch('no-sandbox');
+  app.commandLine.appendSwitch('disable-features', 'UseDBus,AudioServiceOutOfProcess,OzoneWayland');
+
+  if (!process.env.DBUS_SESSION_BUS_ADDRESS) {
+    process.env.DBUS_SESSION_BUS_ADDRESS = 'disabled:';
+  }
+}
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -28,16 +57,14 @@ function createWindow() {
     minHeight: 700,
     backgroundColor: '#0c0a09',
     title: 'Kernel Base',
-    titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
-    trafficLightPosition: { x: 16, y: 16 },
-    vibrancy: 'under-window',
-    visualEffectState: 'active',
+    autoHideMenuBar: true,
+    titleBarStyle: 'default',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
-      webSecurity: true,
+      webSecurity: false,
     },
   });
 
@@ -75,12 +102,22 @@ function createWindow() {
   setupNativeMenu(mainWindow);
 
   // Load URL or File
-  const devUrl = process.env.VITE_DEV_SERVER_URL;
+  const devUrl = process.env.VITE_DEV_SERVER_URL || (!app.isPackaged ? 'http://localhost:3000' : null);
   if (devUrl) {
-    mainWindow.loadURL(devUrl);
+    const loadDev = () => {
+      mainWindow?.loadURL(devUrl).catch(() => {
+        setTimeout(loadDev, 1000);
+      });
+    };
+    loadDev();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
+
+  // Log renderer console messages to main terminal
+  mainWindow.webContents.on('console-message', (_event, level, message, line, sourceId) => {
+    console.log(`[Renderer ${level}] ${message} (${sourceId}:${line})`);
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -88,6 +125,9 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  if (!isSupportedPlatform) {
+    return;
+  }
   createWindow();
 
   app.on('activate', () => {
@@ -98,9 +138,7 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  app.quit();
 });
 
 process.on('uncaughtException', (error) => {

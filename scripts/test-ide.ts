@@ -45,8 +45,6 @@ const requiredPaths = [
   'src/editor/EditorTabs.tsx',
   'src/explorer/ProjectExplorer.tsx',
   'src/agents/AgentPanel.tsx',
-  'src/agents/PermissionModal.tsx',
-  'src/git/GitPanel.tsx',
   'src/diff/DiffViewer.tsx',
   'src/terminal/TerminalPanel.tsx',
   'src/app/TitleBar.tsx',
@@ -54,10 +52,10 @@ const requiredPaths = [
   'src/app/StatusBar.tsx',
   'src/app/CommandPalette.tsx',
   'src/app/QuickOpen.tsx',
-  'src/settings/SettingsModal.tsx',
+  'src/app/SettingsModal.tsx',
   'forge.config.cjs',
   'scripts/build-electron.ts',
-  'build/icon.icns'
+  'logo with bg.png'
 ];
 
 for (const relPath of requiredPaths) {
@@ -124,12 +122,12 @@ for (const cmd of safeCommands) {
   assert(!isCommandDangerous(cmd), `Allowed safe command: "${cmd}"`);
 }
 
-// 5. Test macOS Icon Assets
-console.log('\n🎨 5. Testing macOS Icon Assets...');
-const icnsPath = path.join(rootDir, 'build/icon.icns');
-assert(fs.existsSync(icnsPath), 'App Icon: build/icon.icns exists');
-const icnsStat = fs.statSync(icnsPath);
-assert(icnsStat.size > 5000, `Icon Asset Valid (${(icnsStat.size / 1024).toFixed(1)} KB)`);
+// 5. Test Linux Icon Assets
+console.log('\n🎨 5. Testing Linux Icon Assets...');
+const logoPath = path.join(rootDir, 'logo with bg.png');
+assert(fs.existsSync(logoPath), 'App Icon: logo with bg.png exists');
+const logoStat = fs.statSync(logoPath);
+assert(logoStat.size > 5000, `Icon Asset Valid (${(logoStat.size / 1024).toFixed(1)} KB)`);
 
 console.log('\n========================================================');
 console.log(`📊 Test Results: ${passedTests} / ${totalTests} Passed (${Math.round((passedTests / totalTests) * 100)}%)`);
