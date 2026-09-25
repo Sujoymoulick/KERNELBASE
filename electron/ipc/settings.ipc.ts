@@ -17,7 +17,7 @@ const DEFAULT_SETTINGS: WorkspaceSettings = {
   minimap: true,
   lineNumbers: true,
   formatOnSave: true,
-  defaultShell: process.env.SHELL || '/bin/zsh',
+  defaultShell: process.env.SHELL || (process.platform === 'win32' ? 'wsl.exe' : '/bin/bash'),
   terminalFontSize: 13,
   autoSave: 'afterDelay',
   agentAutoApproveRead: true,

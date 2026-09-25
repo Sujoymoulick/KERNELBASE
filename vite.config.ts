@@ -18,9 +18,22 @@ function sitemapPlugin(): Plugin {
   };
 }
 
+function removeCrossoriginPlugin(): Plugin {
+  return {
+    name: 'remove-crossorigin',
+    transformIndexHtml(html) {
+      return html.replace(/ crossorigin/g, '');
+    },
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), sitemapPlugin()],
+    base: './',
+    build: {
+      modulePreload: false,
+    },
+    plugins: [react(), tailwindcss(), sitemapPlugin(), removeCrossoriginPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

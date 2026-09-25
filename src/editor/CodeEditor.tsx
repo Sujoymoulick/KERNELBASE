@@ -55,7 +55,7 @@ export const CodeEditor: React.FC = () => {
     return (
       <div className="h-full flex flex-col items-center justify-center bg-[#120a07] text-neutral-500 select-none space-y-4">
         <div className="w-16 h-16 rounded-2xl bg-[#1c0e09] border border-[#3d1d13] flex items-center justify-center shadow-inner">
-          <Sparkles className="w-8 h-8 text-[#ff6b35]" />
+          <img src="./logo.png" alt="Kernel Base" className="w-10 h-10 object-contain" />
         </div>
         <div className="text-center">
           <h3 className="text-sm font-semibold text-neutral-300">Kernel Base IDE</h3>

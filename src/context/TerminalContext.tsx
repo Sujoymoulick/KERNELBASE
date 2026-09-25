@@ -28,7 +28,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const session: TerminalSession = {
       id,
       title: `Terminal ${sessions.length + 1}`,
-      cwd: cwd || process.cwd ? process.cwd() : '/workspace',
+      cwd: cwd || (typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/workspace'),
     };
     await api.terminal.create(id, cwd);
     setSessions((prev) => [...prev, session]);

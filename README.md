@@ -4,13 +4,13 @@
 
 # Kernel Base
 
-### **AI-Native Multi-Agent Integrated Development Environment for macOS**
+### **Linux-First AI-Native Multi-Agent Integrated Development Environment**
 
-*Next-generation intelligent IDE pairing developers with an autonomous multi-agent swarm in a high-performance native desktop environment.*
+*Next-generation intelligent IDE pairing developers with an autonomous multi-agent swarm in a high-performance Linux desktop environment.*
 
 <br />
 
-[![macOS](https://img.shields.io/badge/macOS-Sonoma%20%7C%20Sequoia-000000?style=for-the-badge&logo=apple&logoColor=white)](https://apple.com)
+[![Linux](https://img.shields.io/badge/Linux-Ubuntu%20%7C%20Fedora%20%7C%20Arch-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://kernel.org)
 [![Electron](https://img.shields.io/badge/Electron-34.3-47848F?style=for-the-badge&logo=electron&logoColor=white)](https://electronjs.org)
 [![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -20,7 +20,7 @@
 
 <br />
 
-[Features](#-key-features) • [Tech Stack](#-technology-stack) • [System Architecture](#-system-architecture) • [AI Agent Swarm](#-autonomous-multi-agent-swarm) • [Security & Permissions](#-zero-trust-security-engine) • [Quick Start](#-quick-start--development) • [Packaging](#-macos-build--packaging)
+[Architecture Spec](docs/architecture/linux-electron-architecture.md) • [Features](#-key-features) • [Tech Stack](#-technology-stack) • [System Architecture](#-system-architecture) • [AI Agent Swarm](#-autonomous-multi-agent-swarm) • [Security & Permissions](#-zero-trust-security-engine) • [Quick Start](#-quick-start--development)
 
 </div>
 
@@ -28,9 +28,9 @@
 
 ## 🌟 Highlights & Overview
 
-**Kernel Base** is an AI-native desktop IDE built natively for macOS. Unlike traditional code editors that treat AI as a sidecar chatbot, Kernel Base is designed around an autonomous **7-Agent Orchestration Swarm** operating directly in your workspace.
+**Kernel Base** is a Linux-first, AI-native desktop IDE. Unlike traditional code editors that treat AI as a sidecar chatbot, Kernel Base is an **AI execution platform inside a desktop IDE**, powered by a multi-agent swarm, provider-agnostic Model Gateway (supporting Ollama, Hugging Face, llama.cpp, and Cloud LLMs), Linux sandboxing (bubblewrap/cgroups), SQLite local state, and dedicated Report Workspaces.
 
-Kernel Base bridges high-speed native OS capabilities with deep code intelligence, allowing human developers and autonomous AI agents to plan, write, review, test, debug, and commit code together seamlessly.
+For the detailed architectural specification, please read the [Linux Desktop Application Architecture Document](docs/architecture/linux-electron-architecture.md).
 
 ---
 

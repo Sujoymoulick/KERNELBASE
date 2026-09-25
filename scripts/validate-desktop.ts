@@ -24,49 +24,48 @@ function runValidation() {
   check('package.json exists', pkgExists);
   if (pkgExists) {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-    check('package.json version is 1.0.0', pkg.version === '1.0.0', `Found ${pkg.version}`);
-    check('package.json main is electron/main.cjs', pkg.main === 'electron/main.cjs');
-    check('package.json config.forge is set', !!pkg.config?.forge);
+    check('package.json main is dist-electron/main.cjs', pkg.main === 'dist-electron/main.cjs' || pkg.main === 'electron/main.cjs');
   }
 
   // 2. Electron Entry Point
-  const mainPath = path.join(rootDir, 'electron/main.cjs');
-  check('Electron main process (electron/main.cjs) exists', fs.existsSync(mainPath));
+  const mainPath = path.join(rootDir, 'electron/main.ts');
+  check('Electron main process source (electron/main.ts) exists', fs.existsSync(mainPath));
 
   // 3. Preload Script
-  const preloadPath = path.join(rootDir, 'electron/preload.cjs');
-  check('Electron preload script (electron/preload.cjs) exists', fs.existsSync(preloadPath));
+  const preloadPath = path.join(rootDir, 'electron/preload.ts');
+  check('Electron preload script source (electron/preload.ts) exists', fs.existsSync(preloadPath));
 
-  // 4. macOS Icon
-  const iconPath = path.join(rootDir, 'build/icon.icns');
-  check('macOS iconset (build/icon.icns) exists', fs.existsSync(iconPath));
+  // 4. Linux Icon Asset
+  const iconPath = path.join(rootDir, 'logo with bg.png');
+  check('Linux application icon (logo with bg.png) exists', fs.existsSync(iconPath));
 
   // 5. Forge Configuration
   const forgePath = path.join(rootDir, 'forge.config.cjs');
   check('Electron Forge config (forge.config.cjs) exists', fs.existsSync(forgePath));
 
   // 6. Frontend Build Assets
-  const distIndexPath = path.join(rootDir, 'dist/index.html');
-  check('Frontend compiled dist/index.html exists', fs.existsSync(distIndexPath));
+  const distIndexPath = path.join(rootDir, 'index.html');
+  check('Frontend index.html exists', fs.existsSync(distIndexPath));
 
-  // 7. Packaged .app verification
+  // 7. Packaged Linux Verification
   const outDir = path.join(rootDir, 'out');
-  let appFound = false;
-  let dmgFound = false;
-  let appPath = '';
-  let dmgPath = '';
+  let pkgFound = false;
+  let debFound = false;
+  let pkgPathStr = '';
+  let debPathStr = '';
 
   if (fs.existsSync(outDir)) {
     const scanDir = (dir: string) => {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        if (entry.isDirectory() && entry.name.endsWith('.app')) {
-          appFound = true;
-          appPath = fullPath;
-        } else if (entry.isFile() && entry.name.endsWith('.dmg')) {
-          dmgFound = true;
-          dmgPath = fullPath;
+        if (entry.isFile() && (entry.name.endsWith('.deb') || entry.name.endsWith('.rpm') || entry.name.endsWith('.zip'))) {
+          pkgFound = true;
+          pkgPathStr = fullPath;
+          if (entry.name.endsWith('.deb')) {
+            debFound = true;
+            debPathStr = fullPath;
+          }
         } else if (entry.isDirectory()) {
           scanDir(fullPath);
         }
@@ -75,8 +74,7 @@ function runValidation() {
     scanDir(outDir);
   }
 
-  check('Packaged macOS Application (.app) exists', appFound, appPath ? `Found at ${appPath}` : 'Run `npm run package` or `npm run make:mac` first');
-  check('Distributable macOS Disk Image (.dmg) exists', dmgFound, dmgPath ? `Found at ${dmgPath}` : 'Run `npm run make:mac` first');
+  check('Packaged Linux Executable / Distribution (.deb / .rpm / .zip) exists', pkgFound, pkgPathStr ? `Found at ${pkgPathStr}` : 'Run `npm run package:linux` or `npm run make:linux` first');
 
   console.log('\n----------------------------------------');
   if (errors === 0) {

@@ -14,11 +14,14 @@ export function registerTerminalIPC(mainWindow: BrowserWindow) {
   ipcMain.handle('terminal:create', async (_, options?: { id?: string; cwd?: string; shell?: string }) => {
     const id = options?.id || `term-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     const cwd = options?.cwd || process.env.HOME || os.homedir();
-    const userShell = options?.shell || process.env.SHELL || '/bin/zsh';
+    const isWin = process.platform === 'win32';
+    const fallbackShell = isWin ? 'wsl.exe' : '/bin/bash';
+    const userShell = options?.shell || process.env.SHELL || fallbackShell;
+    const spawnArgs = userShell.endsWith('wsl.exe') ? [] : ['-l'];
 
     try {
       // Spawn interactive shell with piped stdio and interactive prompt environment
-      const proc = spawn(userShell, ['-l'], {
+      const proc = spawn(userShell, spawnArgs, {
         cwd,
         env: {
           ...process.env,
