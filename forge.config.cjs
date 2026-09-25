@@ -2,8 +2,8 @@ const path = require('path');
 
 module.exports = {
   packagerConfig: {
-    name: 'Kernel Base',
-    executableName: 'Kernel Base',
+    name: 'kernel-base',
+    executableName: 'kernel-base',
     appBundleId: 'com.kernelbase.ide',
     appCategoryType: 'public.app-category.developer-tools',
     appVersion: '0.1.0',
