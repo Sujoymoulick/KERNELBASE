@@ -141,15 +141,47 @@ export interface WorkspaceConfig {
 }
 
 export interface AppSettings {
-  theme: 'dark' | 'light';
+  // Theme & Appearance
+  theme: 'dark' | 'cyberpunk' | 'dracula' | 'monokai' | 'light';
+  accentColor: string;
+  uiDensity: 'compact' | 'normal' | 'comfortable';
+  showBreadcrumbs: boolean;
+
+  // Code Editor
   fontSize: number;
+  fontFamily: string;
   tabSize: number;
   wordWrap: boolean;
   autoSave: boolean;
+  minimap: boolean;
+  lineNumbers: boolean;
+  formatOnSave: boolean;
+  cursorStyle: 'line' | 'block' | 'underline';
+  bracketPairColorization: boolean;
+
+  // AI & Swarm
   defaultModel: string;
-  apiKeyOpenAI?: string;
+  agentTemperature: number;
+  maxTokens: number;
+  streamThoughts: boolean;
+  autoApproveSafeTools: boolean;
+  autoApproveFileEdits: boolean;
+
+  // Terminal
+  terminalShell: 'default' | 'powershell' | 'cmd' | 'bash';
+  terminalFontSize: number;
+  terminalCursorBlink: boolean;
+  terminalScrollback: number;
+
+  // Git
+  gitAutoFetch: boolean;
+  gitConfirmSync: boolean;
+  gitDefaultBranch: string;
+
+  // API Keys & Connections
   apiKeyAnthropic?: string;
   apiKeyGemini?: string;
+  apiKeyOpenAI?: string;
   ollamaUrl?: string;
-  autoApproveSafeTools: boolean;
 }
+

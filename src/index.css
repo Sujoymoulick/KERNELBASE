@@ -2,6 +2,67 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─── Theme CSS Variables ───────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --kb-bg:               #0c0a09;
+  --kb-surface:          #120a07;
+  --kb-surface-elevated: #190d09;
+  --kb-border:           #2b140c;
+  --kb-brand:            #ff6b35;
+  --kb-accent:           #ff6b35;
+  --kb-text:             #e8ded8;
+  --kb-text-muted:       #a89b95;
+  color-scheme: dark;
+}
+
+[data-theme="cyberpunk"] {
+  --kb-bg:               #030712;
+  --kb-surface:          #050b14;
+  --kb-surface-elevated: #091322;
+  --kb-border:           #0e2638;
+  --kb-brand:            #00f0ff;
+  --kb-accent:           #ff0055;
+  --kb-text:             #d1f4ff;
+  --kb-text-muted:       #4c8fa3;
+  color-scheme: dark;
+}
+
+[data-theme="dracula"] {
+  --kb-bg:               #181825;
+  --kb-surface:          #1e1e2e;
+  --kb-surface-elevated: #282a36;
+  --kb-border:           #44475a;
+  --kb-brand:            #bd93f9;
+  --kb-accent:           #ff79c6;
+  --kb-text:             #f8f8f2;
+  --kb-text-muted:       #6272a4;
+  color-scheme: dark;
+}
+
+[data-theme="monokai"] {
+  --kb-bg:               #1e1f1c;
+  --kb-surface:          #272822;
+  --kb-surface-elevated: #383730;
+  --kb-border:           #49483e;
+  --kb-brand:            #a6e22e;
+  --kb-accent:           #f92672;
+  --kb-text:             #f8f8f2;
+  --kb-text-muted:       #75715e;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --kb-bg:               #e9ecef;
+  --kb-surface:          #f8f9fa;
+  --kb-surface-elevated: #ffffff;
+  --kb-border:           #dee2e6;
+  --kb-brand:            #d9480f;
+  --kb-accent:           #e65100;
+  --kb-text:             #212529;
+  --kb-text-muted:       #6c757d;
+  color-scheme: light;
+}
+
 /* ─── Dark theme (default) ─────────────────────────────────────────────── */
 html.dark {
   --kb-bg:               #120704;
@@ -239,3 +300,13 @@ body > svg.error-icon {
     animation: none !important;
   }
 }
+
+/* ─── Electron Frameless Window Drag Regions ────────────────────────────── */
+.app-drag-region {
+  -webkit-app-region: drag;
+}
+
+.no-drag-region {
+  -webkit-app-region: no-drag;
+}
+

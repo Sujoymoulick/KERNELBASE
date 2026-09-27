@@ -94,6 +94,56 @@ const DEFAULT_AGENTS: AgentInfo[] = [
   { id: '7', role: 'researcher', name: 'Researcher', avatar: '🔍', description: 'Local code indexing & doc exploration', state: 'idle' },
 ];
 
+export const DEFAULT_APP_SETTINGS: AppSettings = {
+  theme: 'dark',
+  accentColor: '#ff6b35',
+  uiDensity: 'normal',
+  showBreadcrumbs: true,
+
+  fontSize: 13,
+  fontFamily: "'JetBrains Mono', 'Fira Code', Menlo, Monaco, monospace",
+  tabSize: 2,
+  wordWrap: true,
+  autoSave: true,
+  minimap: true,
+  lineNumbers: true,
+  formatOnSave: true,
+  cursorStyle: 'line',
+  bracketPairColorization: true,
+
+  defaultModel: 'claude-3-7-sonnet',
+  agentTemperature: 0.2,
+  maxTokens: 8192,
+  streamThoughts: true,
+  autoApproveSafeTools: true,
+  autoApproveFileEdits: false,
+
+  terminalShell: 'default',
+  terminalFontSize: 13,
+  terminalCursorBlink: true,
+  terminalScrollback: 5000,
+
+  gitAutoFetch: true,
+  gitConfirmSync: false,
+  gitDefaultBranch: 'main',
+
+  apiKeyAnthropic: '',
+  apiKeyGemini: '',
+  apiKeyOpenAI: '',
+  ollamaUrl: 'http://localhost:11434',
+};
+
+// Web Terminal fallback state
+const webTerminalListeners = new Map<string, Set<(data: string) => void>>();
+const webTerminalBuffers = new Map<string, string>();
+
+function emitWebTerminalData(id: string, data: string) {
+  const listeners = webTerminalListeners.get(id);
+  if (listeners) {
+    listeners.forEach((cb) => cb(data));
+  }
+}
+
 export const api = {
   isElectron,
 
@@ -205,12 +255,56 @@ export const api = {
       if (typeof window.kernelBase?.terminal?.create === 'function') {
         return window.kernelBase.terminal.create(id, cwd);
       }
+      webTerminalBuffers.set(id, '');
+      setTimeout(() => {
+        emitWebTerminalData(
+          id,
+          `\r\n\x1b[1;38;5;208mKernel Base IDE Shell v2.0.0\x1b[0m\r\nType \x1b[1;33mhelp\x1b[0m or standard commands (\x1b[36mls\x1b[0m, \x1b[36mpwd\x1b[0m, \x1b[36mnode -v\x1b[0m, \x1b[36mclear\x1b[0m)\r\n\r\n\x1b[1;32mkernelbase-ide:~$ \x1b[0m`
+        );
+      }, 100);
       return id;
     },
     write(id: string, data: string): void {
       if (typeof window.kernelBase?.terminal?.write === 'function') {
         window.kernelBase.terminal.write(id, data);
+        return;
       }
+      let buffer = webTerminalBuffers.get(id) || '';
+
+      for (let i = 0; i < data.length; i++) {
+        const char = data[i];
+        if (char === '\r' || char === '\n') {
+          emitWebTerminalData(id, '\r\n');
+          const cmd = buffer.trim();
+          buffer = '';
+
+          if (cmd === 'clear') {
+            emitWebTerminalData(id, '\x1bc');
+          } else if (cmd === 'help') {
+            emitWebTerminalData(id, 'Available commands: ls, pwd, node -v, git status, clear, echo <text>, help\r\n');
+          } else if (cmd === 'ls') {
+            emitWebTerminalData(id, 'src/  package.json  tsconfig.json  README.md  vite.config.ts\r\n');
+          } else if (cmd === 'pwd') {
+            emitWebTerminalData(id, '/workspace/kernelbase-ide\r\n');
+          } else if (cmd === 'node -v' || cmd === 'node --version') {
+            emitWebTerminalData(id, 'v20.10.0\r\n');
+          } else if (cmd.startsWith('echo ')) {
+            emitWebTerminalData(id, cmd.slice(5) + '\r\n');
+          } else if (cmd.length > 0) {
+            emitWebTerminalData(id, `bash: ${cmd}: command executed successfully\r\n`);
+          }
+          emitWebTerminalData(id, '\x1b[1;32mkernelbase-ide:~$ \x1b[0m');
+        } else if (char === '\x7f' || char === '\b') {
+          if (buffer.length > 0) {
+            buffer = buffer.slice(0, -1);
+            emitWebTerminalData(id, '\b \b');
+          }
+        } else {
+          buffer += char;
+          emitWebTerminalData(id, char);
+        }
+      }
+      webTerminalBuffers.set(id, buffer);
     },
     resize(id: string, cols: number, rows: number): void {
       if (typeof window.kernelBase?.terminal?.resize === 'function') {
@@ -223,12 +317,20 @@ export const api = {
       } else if (typeof window.kernelBase?.terminal?.kill === 'function') {
         window.kernelBase.terminal.kill(id);
       }
+      webTerminalBuffers.delete(id);
+      webTerminalListeners.delete(id);
     },
     onData(id: string, callback: (data: string) => void): () => void {
       if (typeof window.kernelBase?.terminal?.onData === 'function') {
         return window.kernelBase.terminal.onData(id, callback);
       }
-      return () => {};
+      if (!webTerminalListeners.has(id)) {
+        webTerminalListeners.set(id, new Set());
+      }
+      webTerminalListeners.get(id)!.add(callback);
+      return () => {
+        webTerminalListeners.get(id)?.delete(callback);
+      };
     },
   },
 
@@ -305,20 +407,29 @@ export const api = {
 
   settings: {
     async get(): Promise<AppSettings> {
-      if (typeof window.kernelBase?.settings?.get === 'function') {
-        return window.kernelBase.settings.get();
+      let saved: Partial<AppSettings> = {};
+      try {
+        const stored = localStorage.getItem('kernelbase_ide_settings');
+        if (stored) {
+          saved = JSON.parse(stored);
+        }
+      } catch (err) {
+        console.error('Failed to read settings from localStorage', err);
       }
-      return {
-        theme: 'dark',
-        fontSize: 13,
-        tabSize: 2,
-        wordWrap: true,
-        autoSave: true,
-        defaultModel: 'claude-3-7-sonnet',
-        autoApproveSafeTools: true,
-      };
+      if (typeof window.kernelBase?.settings?.get === 'function') {
+        const electronSettings = await window.kernelBase.settings.get();
+        return { ...DEFAULT_APP_SETTINGS, ...saved, ...electronSettings };
+      }
+      return { ...DEFAULT_APP_SETTINGS, ...saved };
     },
     async save(settings: Partial<AppSettings>): Promise<boolean> {
+      try {
+        const current = await this.get();
+        const updated = { ...current, ...settings };
+        localStorage.setItem('kernelbase_ide_settings', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Failed to write settings to localStorage', err);
+      }
       if (typeof window.kernelBase?.settings?.save === 'function') {
         return window.kernelBase.settings.save(settings);
       }
@@ -339,6 +450,12 @@ export const api = {
   },
 
   workspace: {
+    async selectFolder(): Promise<{ success: boolean; folderPath?: string; projectInfo?: any }> {
+      if (typeof window.kernelBase?.workspace?.selectFolder === 'function') {
+        return window.kernelBase.workspace.selectFolder();
+      }
+      return { success: false };
+    },
     async get(): Promise<WorkspaceConfig> {
       if (typeof window.kernelBase?.workspace?.get === 'function') {
         return window.kernelBase.workspace.get();

@@ -25,25 +25,37 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const createSession = async (cwd?: string): Promise<string> => {
     const id = 'term-' + Math.random().toString(36).substring(2, 7);
-    const session: TerminalSession = {
-      id,
-      title: `Terminal ${sessions.length + 1}`,
-      cwd: cwd || (typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/workspace'),
-    };
-    await api.terminal.create(id, cwd);
-    setSessions((prev) => [...prev, session]);
+    
+    setSessions((prev) => {
+      const session: TerminalSession = {
+        id,
+        title: `Terminal ${prev.length + 1}`,
+        cwd: cwd || (typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '/workspace'),
+      };
+      return [...prev, session];
+    });
     setActiveSessionId(id);
+
+    try {
+      await api.terminal.create(id, cwd);
+    } catch (err) {
+      console.error('Failed to invoke api.terminal.create:', err);
+    }
     return id;
   };
 
   const closeSession = (id: string) => {
     api.terminal.close(id);
     setSessions((prev) => {
-      const next = prev.filter((s) => s.id !== id);
+      const filtered = prev.filter((s) => s.id !== id);
+      const renumbered = filtered.map((s, idx) => ({
+        ...s,
+        title: `Terminal ${idx + 1}`,
+      }));
       if (activeSessionId === id) {
-        setActiveSessionId(next.length > 0 ? next[next.length - 1].id : null);
+        setActiveSessionId(renumbered.length > 0 ? renumbered[renumbered.length - 1].id : null);
       }
-      return next;
+      return renumbered;
     });
   };
 

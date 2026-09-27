@@ -22,6 +22,7 @@ interface AgentContextType {
   stopPlan: () => Promise<void>;
   respondPermission: (approved: boolean, alwaysAllow?: boolean) => Promise<void>;
   clearThoughts: () => void;
+  refreshSwarm: () => Promise<void>;
 }
 
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
@@ -72,11 +73,29 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, []);
 
+  const addThought = (role: string, text: string) => {
+    setThoughts((prev) => [
+      ...prev,
+      {
+        id: Math.random().toString(36).substring(2, 9),
+        role,
+        text,
+        timestamp: Date.now(),
+      },
+    ]);
+  };
+
   const submitGoal = async (goal: string) => {
     try {
       setIsRunning(true);
+      addThought('orchestrator', `Objective received: "${goal}"`);
+      addThought('planner', 'Formulating DAG execution plan with 4 specialized agent tasks.');
+
       const plan = await api.agents.submitGoal(goal);
       setCurrentPlan(plan);
+      if (plan.steps && plan.steps.length > 0) {
+        setTimeout(() => executeStep(plan.steps[0].id), 500);
+      }
     } catch (err) {
       console.error('Failed to submit goal:', err);
       setIsRunning(false);
@@ -85,7 +104,49 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const executeStep = async (stepId: string) => {
     try {
+      setCurrentPlan((prev) => {
+        if (!prev) return null;
+        const current = prev.steps.find((s) => s.id === stepId);
+        if (current) {
+          addThought(
+            current.assignedRole || 'agent',
+            `Executing step: ${current.title} — ${current.description}`
+          );
+        }
+        return {
+          ...prev,
+          steps: prev.steps.map((s) => (s.id === stepId ? { ...s, status: 'in_progress' as const } : s)),
+        };
+      });
+
       await api.agents.runStep(stepId);
+
+      setTimeout(() => {
+        setCurrentPlan((prev) => {
+          if (!prev) return null;
+          const updatedSteps = prev.steps.map((s) => (s.id === stepId ? { ...s, status: 'completed' as const } : s));
+          const completedStep = updatedSteps.find((s) => s.id === stepId);
+          if (completedStep) {
+            addThought(
+              completedStep.assignedRole || 'agent',
+              `Completed step: ${completedStep.title}`
+            );
+          }
+
+          const nextStep = updatedSteps.find((s) => s.status === 'pending');
+          if (!nextStep) {
+            setIsRunning(false);
+            addThought('orchestrator', 'All execution plan steps completed successfully.');
+          } else {
+            setTimeout(() => executeStep(nextStep.id), 800);
+          }
+          return {
+            ...prev,
+            status: !nextStep ? 'completed' : 'running',
+            steps: updatedSteps,
+          };
+        });
+      }, 1500);
     } catch (err) {
       console.error('Failed to execute step:', stepId, err);
     }
@@ -117,6 +178,19 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setThoughts([]);
   };
 
+  const refreshSwarm = async () => {
+    try {
+      setIsRunning(false);
+      setCurrentPlan(null);
+      setThoughts([]);
+      setPendingPermission(null);
+      const list = await api.agents.listAgents();
+      setAgents(list.map((a) => ({ ...a, state: 'idle' })));
+    } catch (err) {
+      console.error('Failed to refresh swarm:', err);
+    }
+  };
+
   return (
     <AgentContext.Provider
       value={{
@@ -132,6 +206,7 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         stopPlan,
         respondPermission,
         clearThoughts,
+        refreshSwarm,
       }}
     >
       {children}

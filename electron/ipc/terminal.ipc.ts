@@ -1,6 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import { spawn, ChildProcess } from 'node:child_process';
 import os from 'node:os';
+import fs from 'node:fs';
 
 interface TerminalSession {
   id: string;
@@ -13,23 +14,50 @@ const sessions = new Map<string, TerminalSession>();
 export function registerTerminalIPC(mainWindow: BrowserWindow) {
   ipcMain.handle('terminal:create', async (_, options?: { id?: string; cwd?: string; shell?: string }) => {
     const id = options?.id || `term-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const cwd = options?.cwd || process.env.HOME || os.homedir();
     const isWin = process.platform === 'win32';
-    const fallbackShell = isWin ? 'wsl.exe' : '/bin/bash';
-    const userShell = options?.shell || process.env.SHELL || fallbackShell;
-    const spawnArgs = userShell.endsWith('wsl.exe') ? [] : ['-l'];
+    
+    let targetCwd = options?.cwd || process.env.HOME || os.homedir();
+    if (!targetCwd || !fs.existsSync(targetCwd)) {
+      targetCwd = process.cwd();
+    }
+
+    let userShell = options?.shell || process.env.SHELL;
+    if (!userShell) {
+      if (isWin) {
+        if (fs.existsSync('C:\\Windows\\System32\\wsl.exe')) {
+          userShell = 'wsl.exe';
+        } else if (fs.existsSync('C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe')) {
+          userShell = 'powershell.exe';
+        } else {
+          userShell = process.env.COMSPEC || 'cmd.exe';
+        }
+      } else {
+        userShell = '/bin/bash';
+      }
+    }
+
+    const spawnArgs: string[] = [];
+    if (isWin) {
+      if (userShell.includes('powershell')) {
+        spawnArgs.push('-NoLogo', '-NoExit');
+      } else if (userShell.includes('cmd')) {
+        spawnArgs.push('/k');
+      }
+    } else if (userShell.endsWith('bash') || userShell.endsWith('zsh')) {
+      spawnArgs.push('-l');
+    }
 
     try {
       // Spawn interactive shell with piped stdio and interactive prompt environment
       const proc = spawn(userShell, spawnArgs, {
-        cwd,
+        cwd: targetCwd,
         env: {
           ...process.env,
           TERM: 'xterm-256color',
           COLORTERM: 'truecolor',
           KERNEL_BASE_IDE: '1',
         },
-        shell: false,
+        shell: isWin ? true : false,
         stdio: ['pipe', 'pipe', 'pipe'],
       });
 
@@ -52,15 +80,25 @@ export function registerTerminalIPC(mainWindow: BrowserWindow) {
         }
       });
 
-      sessions.set(id, { id, process: proc, cwd });
+      proc.on('error', (err) => {
+        console.error(`Terminal process error [${id}]:`, err);
+        if (!mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('terminal:data', { id, data: `\r\nTerminal Error: ${err.message}\r\n` });
+        }
+      });
 
-      // Send initial clear or newline to trigger prompt
+      sessions.set(id, { id, process: proc, cwd: targetCwd });
+
+      // Send initial newline to trigger prompt rendering
       setTimeout(() => {
-        proc.stdin?.write('\n');
-      }, 100);
+        try {
+          proc.stdin?.write('\r\n');
+        } catch {}
+      }, 150);
 
-      return { success: true, id, cwd, shell: userShell };
+      return { success: true, id, cwd: targetCwd, shell: userShell };
     } catch (err: any) {
+      console.error('Failed to create terminal session:', err);
       return { success: false, error: err.message };
     }
   });

@@ -62,7 +62,7 @@ export const StatusBar: React.FC = () => {
             className={`flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors ${
               activeBottomPanel === 'terminal' ? 'bg-[#26130b] text-[#ff6b35]' : 'hover:text-neutral-200'
             }`}
-            title="Toggle Terminal (⌘J)"
+            title="Toggle Terminal (Ctrl+`)"
           >
             <Terminal className="w-3.5 h-3.5" />
             <span>Terminal</span>

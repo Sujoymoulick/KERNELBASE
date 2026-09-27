@@ -50,6 +50,7 @@ if (isWSL || process.platform === 'linux') {
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
+  const iconPath = path.join(__dirname, '../public/logo.png');
   mainWindow = new BrowserWindow({
     width: 1440,
     height: 920,
@@ -57,8 +58,9 @@ function createWindow() {
     minHeight: 700,
     backgroundColor: '#0c0a09',
     title: 'Kernel Base',
+    icon: iconPath,
     autoHideMenuBar: true,
-    titleBarStyle: 'default',
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -90,6 +92,7 @@ function createWindow() {
     }
   });
   ipcMain.handle('window:close', () => mainWindow?.close());
+  ipcMain.handle('window:isMaximized', () => mainWindow?.isMaximized() ?? false);
   ipcMain.handle('system:getPlatformInfo', () => ({
     platform: process.platform,
     arch: process.arch,
