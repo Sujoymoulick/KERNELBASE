@@ -3,8 +3,17 @@ import { contextBridge, ipcRenderer } from 'electron';
 export const KERNEL_BASE_API = {
   // Filesystem
   fs: {
-    readFile: (filePath: string) => ipcRenderer.invoke('fs:readFile', filePath),
-    writeFile: (filePath: string, content: string) => ipcRenderer.invoke('fs:writeFile', filePath, content),
+    readFile: async (filePath: string) => {
+      const res = await ipcRenderer.invoke('fs:readFile', filePath);
+      if (res && typeof res === 'object' && 'content' in res) {
+        return res.content;
+      }
+      return typeof res === 'string' ? res : '';
+    },
+    writeFile: async (filePath: string, content: string) => {
+      const res = await ipcRenderer.invoke('fs:writeFile', filePath, content);
+      return res?.success ?? true;
+    },
     createFile: (filePath: string, content?: string) => ipcRenderer.invoke('fs:createFile', filePath, content),
     createDirectory: (dirPath: string) => ipcRenderer.invoke('fs:createDirectory', dirPath),
     createDir: (dirPath: string) => ipcRenderer.invoke('fs:createDirectory', dirPath),
@@ -13,7 +22,7 @@ export const KERNEL_BASE_API = {
     listDirectory: (dirPath: string, depth?: number) => ipcRenderer.invoke('fs:listDirectory', dirPath, depth),
     readDir: async (dirPath: string, _recursive?: boolean) => {
       const res = await ipcRenderer.invoke('fs:listDirectory', dirPath);
-      return Array.isArray(res) ? res : (res?.data || []);
+      return Array.isArray(res) ? res : (res?.nodes || res?.data || []);
     },
     stat: (targetPath: string) => ipcRenderer.invoke('fs:stat', targetPath),
     revealInFinder: (targetPath: string) => ipcRenderer.invoke('fs:revealInFinder', targetPath),
@@ -120,11 +129,14 @@ export const KERNEL_BASE_API = {
     getRecent: () => ipcRenderer.invoke('workspace:getRecent'),
     get: async () => {
       try {
-        const recent = await ipcRenderer.invoke('workspace:getRecent');
-        const rootPath = (Array.isArray(recent) && recent[0]) ? recent[0] : (process.cwd ? process.cwd() : '/workspace');
-        return { rootPath, name: 'Kernel Base Workspace', projectType: 'node' };
+        const res = await ipcRenderer.invoke('workspace:getRecent');
+        const recents = Array.isArray(res) ? res : (res?.recents || []);
+        const rootPath = recents.length > 0 ? recents[0] : (process.cwd ? process.cwd() : 'D:\\Games\\Kernelbase\\KERNELBASE_som');
+        const name = rootPath.split(/[/\\]/).filter(Boolean).pop() || 'Kernel Base Workspace';
+        return { rootPath, name, projectType: 'node' };
       } catch {
-        return { rootPath: '/workspace', name: 'Kernel Base Workspace', projectType: 'node' };
+        const rootPath = process.cwd ? process.cwd() : 'D:\\Games\\Kernelbase\\KERNELBASE_som';
+        return { rootPath, name: 'Kernel Base Workspace', projectType: 'node' };
       }
     },
     set: (dirPath: string) => ipcRenderer.invoke('workspace:openFolder', dirPath),
@@ -160,6 +172,7 @@ export const KERNEL_BASE_API = {
     minimize: () => ipcRenderer.invoke('window:minimize'),
     maximize: () => ipcRenderer.invoke('window:maximize'),
     close: () => ipcRenderer.invoke('window:close'),
+    isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
   }
 };
 

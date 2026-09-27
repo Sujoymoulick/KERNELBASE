@@ -16,6 +16,7 @@ export const CommandPalette: React.FC = () => {
   const {
     isCommandPaletteOpen,
     setIsCommandPaletteOpen,
+    setIsQuickOpenOpen,
     setActiveSidebar,
     setActiveBottomPanel,
     saveActiveFile,
@@ -32,6 +33,7 @@ export const CommandPalette: React.FC = () => {
       id: 'agent:goal',
       title: 'Agent: Submit New Development Goal',
       category: 'Agent Swarm',
+      shortcut: 'Ctrl+Shift+A',
       icon: Sparkles,
       action: () => {
         setIsCommandPaletteOpen(false);
@@ -39,10 +41,21 @@ export const CommandPalette: React.FC = () => {
       },
     },
     {
+      id: 'file:quickopen',
+      title: 'File: Quick Open File by Name',
+      category: 'File',
+      shortcut: 'Ctrl+P',
+      icon: Files,
+      action: () => {
+        setIsCommandPaletteOpen(false);
+        setIsQuickOpenOpen(true);
+      },
+    },
+    {
       id: 'file:save',
       title: 'File: Save Active File',
       category: 'File',
-      shortcut: '⌘S',
+      shortcut: 'Ctrl+S',
       icon: Save,
       action: () => saveActiveFile(),
     },
@@ -50,7 +63,7 @@ export const CommandPalette: React.FC = () => {
       id: 'view:explorer',
       title: 'View: Toggle Project Explorer',
       category: 'View',
-      shortcut: '⌘⇧E',
+      shortcut: 'Ctrl+Shift+E',
       icon: Files,
       action: () => setActiveSidebar('explorer'),
     },
@@ -58,7 +71,7 @@ export const CommandPalette: React.FC = () => {
       id: 'view:agents',
       title: 'View: Toggle Agent Swarm Panel',
       category: 'View',
-      shortcut: '⌘⇧A',
+      shortcut: 'Ctrl+Shift+A',
       icon: Sparkles,
       action: () => setActiveSidebar('agents'),
     },
@@ -66,7 +79,7 @@ export const CommandPalette: React.FC = () => {
       id: 'view:git',
       title: 'View: Toggle Git Source Control',
       category: 'View',
-      shortcut: '⌘⇧G',
+      shortcut: 'Ctrl+Shift+G',
       icon: GitBranch,
       action: () => setActiveSidebar('git'),
     },
@@ -74,7 +87,7 @@ export const CommandPalette: React.FC = () => {
       id: 'view:terminal',
       title: 'View: Toggle Interactive Terminal',
       category: 'View',
-      shortcut: '⌘J',
+      shortcut: 'Ctrl+`',
       icon: Terminal,
       action: () => setActiveBottomPanel('terminal'),
     },
@@ -82,7 +95,7 @@ export const CommandPalette: React.FC = () => {
       id: 'settings:open',
       title: 'Preferences: Open IDE & AI Settings',
       category: 'Preferences',
-      shortcut: '⌘,',
+      shortcut: 'Ctrl+,',
       icon: Settings,
       action: () => setIsSettingsOpen(true),
     },

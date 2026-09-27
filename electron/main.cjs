@@ -205,6 +205,7 @@ function createApplicationMenu() {
 }
 
 function createWindow() {
+  const iconPath = path.join(__dirname, '../public/logo.png');
   mainWindow = new BrowserWindow({
     title: 'Kernel Base Docs',
     width: 1380,
@@ -213,8 +214,9 @@ function createWindow() {
     minHeight: 700,
     show: false,
     backgroundColor: '#090D16',
-    titleBarStyle: 'hiddenInset',
-    trafficLightPosition: { x: 18, y: 18 },
+    icon: iconPath,
+    frame: false,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,

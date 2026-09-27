@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { EditorTab, FileEntry, WorkspaceConfig, AppSettings, DiagnosticItem, FileDiff } from '../types/ide';
-import { api } from '../services/api';
+import { api, DEFAULT_APP_SETTINGS } from '../services/api';
 
-export type ActiveSidebarView = 'explorer' | 'agents' | 'git' | 'search' | 'cli' | 'none';
+export type ActiveSidebarView = 'explorer' | 'agents' | 'git' | 'search' | 'cli' | 'extensions' | 'none';
 export type ActiveBottomPanel = 'terminal' | 'problems' | 'diff' | 'timeline' | 'none';
 
 interface IDEContextType {
@@ -12,6 +12,7 @@ interface IDEContextType {
   activeTabId: string | null;
   activeSidebar: ActiveSidebarView;
   activeBottomPanel: ActiveBottomPanel;
+  isAgentPanelOpen: boolean;
   settings: AppSettings;
   diagnostics: DiagnosticItem[];
   activeDiff: FileDiff | null;
@@ -21,6 +22,8 @@ interface IDEContextType {
   setWorkspace: (ws: WorkspaceConfig) => void;
   setActiveSidebar: (view: ActiveSidebarView) => void;
   setActiveBottomPanel: (panel: ActiveBottomPanel) => void;
+  setIsAgentPanelOpen: (open: boolean | ((prev: boolean) => boolean)) => void;
+  toggleAgentPanel: () => void;
   openFile: (filePath: string) => Promise<void>;
   closeTab: (tabId: string) => void;
   closeAllTabs: () => void;
@@ -83,32 +86,26 @@ export const IDEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [activeSidebar, setActiveSidebar] = useState<ActiveSidebarView>('explorer');
   const [activeBottomPanel, setActiveBottomPanel] = useState<ActiveBottomPanel>('terminal');
+  const [isAgentPanelOpen, setIsAgentPanelOpen] = useState(false);
   const [activeDiff, setActiveDiff] = useState<FileDiff | null>(null);
+
+  const toggleAgentPanel = () => {
+    setIsAgentPanelOpen((prev) => !prev);
+  };
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isQuickOpenOpen, setIsQuickOpenOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [diagnostics, setDiagnostics] = useState<DiagnosticItem[]>([]);
-  const [settings, setSettingsState] = useState<AppSettings>({
-    theme: 'dark',
-    fontSize: 13,
-    tabSize: 2,
-    wordWrap: true,
-    autoSave: true,
-    defaultModel: 'claude-3-7-sonnet',
-    autoApproveSafeTools: true,
-  });
+  const [settings, setSettingsState] = useState<AppSettings>(DEFAULT_APP_SETTINGS);
 
   useEffect(() => {
     async function init() {
       try {
-        const ws = await api.workspace.get();
-        setWorkspaceState(ws);
-        const fileList = await api.fs.readDir(ws.rootPath, true);
-        setFiles(fileList);
         const initialSettings = await api.settings.get();
         setSettingsState(initialSettings);
+        // Explorer starts blank initially until a folder is explicitly opened
       } catch (err) {
-        console.error('Failed to initialize IDE workspace:', err);
+        console.error('Failed to initialize IDE settings:', err);
       }
     }
     init();
@@ -244,6 +241,7 @@ export const IDEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeTabId,
         activeSidebar,
         activeBottomPanel,
+        isAgentPanelOpen,
         settings,
         diagnostics,
         activeDiff,
@@ -253,6 +251,8 @@ export const IDEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWorkspace,
         setActiveSidebar,
         setActiveBottomPanel,
+        setIsAgentPanelOpen,
+        toggleAgentPanel,
         openFile,
         closeTab,
         closeAllTabs,
