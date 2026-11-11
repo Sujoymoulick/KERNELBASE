@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { EditorTab, FileEntry, WorkspaceConfig, AppSettings, DiagnosticItem, FileDiff } from '../types/ide';
 import { api } from '../services/api';
 
-export type ActiveSidebarView = 'explorer' | 'agents' | 'git' | 'search' | 'cli' | 'none';
-export type ActiveBottomPanel = 'terminal' | 'problems' | 'diff' | 'timeline' | 'none';
+export type ActiveSidebarView = 'explorer' | 'search' | 'git' | 'run' | 'extensions' | 'agents' | 'cli' | 'none';
+export type ActiveBottomPanel = 'terminal' | 'problems' | 'output' | 'debug' | 'diff' | 'timeline' | 'none';
 
 interface IDEContextType {
   workspace: WorkspaceConfig | null;
@@ -104,7 +104,7 @@ export const IDEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const ws = await api.workspace.get();
         setWorkspaceState(ws);
         const fileList = await api.fs.readDir(ws.rootPath, true);
-        setFiles(fileList);
+        setFiles(Array.isArray(fileList) ? fileList : (fileList as any)?.nodes || []);
         const initialSettings = await api.settings.get();
         setSettingsState(initialSettings);
       } catch (err) {
@@ -118,7 +118,7 @@ export const IDEProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!workspace) return;
     try {
       const fileList = await api.fs.readDir(workspace.rootPath, true);
-      setFiles(fileList);
+      setFiles(Array.isArray(fileList) ? fileList : (fileList as any)?.nodes || []);
     } catch (err) {
       console.error('Failed to refresh files:', err);
     }

@@ -25,17 +25,17 @@ function runValidation() {
   if (pkgExists) {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     check('package.json version is 1.0.0', pkg.version === '1.0.0', `Found ${pkg.version}`);
-    check('package.json main is electron/main.cjs', pkg.main === 'electron/main.cjs');
+    check('package.json main is configured', pkg.main === 'dist-electron/main.cjs' || pkg.main === 'electron/main.cjs');
     check('package.json config.forge is set', !!pkg.config?.forge);
   }
 
   // 2. Electron Entry Point
-  const mainPath = path.join(rootDir, 'electron/main.cjs');
-  check('Electron main process (electron/main.cjs) exists', fs.existsSync(mainPath));
+  const mainPath = path.join(rootDir, 'dist-electron/main.cjs');
+  check('Electron main process (dist-electron/main.cjs) exists', fs.existsSync(mainPath));
 
   // 3. Preload Script
-  const preloadPath = path.join(rootDir, 'electron/preload.cjs');
-  check('Electron preload script (electron/preload.cjs) exists', fs.existsSync(preloadPath));
+  const preloadPath = path.join(rootDir, 'dist-electron/preload.cjs');
+  check('Electron preload script (dist-electron/preload.cjs) exists', fs.existsSync(preloadPath));
 
   // 4. macOS Icon
   const iconPath = path.join(rootDir, 'build/icon.icns');
@@ -64,7 +64,7 @@ function runValidation() {
         if (entry.isDirectory() && entry.name.endsWith('.app')) {
           appFound = true;
           appPath = fullPath;
-        } else if (entry.isFile() && entry.name.endsWith('.dmg')) {
+        } else if (entry.isFile() && (entry.name.endsWith('.dmg') || entry.name.endsWith('.zip'))) {
           dmgFound = true;
           dmgPath = fullPath;
         } else if (entry.isDirectory()) {

@@ -70,7 +70,7 @@ export function registerCliIPC(mainWindow: BrowserWindow) {
       const proc = spawn(cliId, args, {
         cwd,
         env: { ...process.env, FORCE_COLOR: '1' },
-        shell: true,
+        shell: false,
       });
 
       proc.stdout?.on('data', (data) => {

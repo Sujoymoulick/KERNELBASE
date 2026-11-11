@@ -1,14 +1,15 @@
 import { ipcMain } from 'electron';
-import { exec } from 'node:child_process';
-import util from 'node:util';
+import { execFile } from 'node:child_process';
 
-const execAsync = util.promisify(exec);
-
-async function runGit(cwd: string, command: string): Promise<{ stdout: string; stderr: string }> {
-  return execAsync(`git ${command}`, {
-    cwd,
-    env: { ...process.env, LANG: 'en_US.UTF-8' },
-    maxBuffer: 10 * 1024 * 1024,
+/** Runs git with an argv array (no shell), so paths and messages cannot inject commands. */
+function runGit(cwd: string, args: string[]): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    execFile(
+      'git',
+      args,
+      { cwd, env: { ...process.env, LANG: 'en_US.UTF-8', GIT_TERMINAL_PROMPT: '0' }, maxBuffer: 10 * 1024 * 1024 },
+      (err, stdout, stderr) => (err ? reject(Object.assign(err, { stderr })) : resolve({ stdout, stderr }))
+    );
   });
 }
 
@@ -16,17 +17,17 @@ export function registerGitIPC() {
   ipcMain.handle('git:status', async (_, workspacePath: string) => {
     try {
       // Check if it is a git repo
-      await runGit(workspacePath, 'rev-parse --is-inside-work-tree');
+      await runGit(workspacePath, ['rev-parse', '--is-inside-work-tree']);
 
       // Get current branch
-      const branchRes = await runGit(workspacePath, 'branch --show-current').catch(() => ({ stdout: 'main' }));
+      const branchRes = await runGit(workspacePath, ['branch', '--show-current']).catch(() => ({ stdout: 'main' }));
       const currentBranch = branchRes.stdout.trim() || 'HEAD';
 
       // Get ahead/behind
       let ahead = 0;
       let behind = 0;
       try {
-        const revList = await runGit(workspacePath, 'rev-list --left-right --count @{u}...HEAD');
+        const revList = await runGit(workspacePath, ['rev-list', '--left-right', '--count', '@{u}...HEAD']);
         const [b, a] = revList.stdout.trim().split(/\s+/).map(Number);
         behind = b || 0;
         ahead = a || 0;
@@ -35,7 +36,7 @@ export function registerGitIPC() {
       }
 
       // Get porcelain status
-      const statusRes = await runGit(workspacePath, 'status --porcelain=v1 -uall');
+      const statusRes = await runGit(workspacePath, ['status', '--porcelain=v1', '-uall']);
       const lines = statusRes.stdout.split('\n').filter(Boolean);
 
       const stagedFiles: any[] = [];
@@ -66,7 +67,7 @@ export function registerGitIPC() {
       // Get last commit
       let lastCommit: any = undefined;
       try {
-        const logRes = await runGit(workspacePath, 'log -1 --format="%H|%s|%an|%cr"');
+        const logRes = await runGit(workspacePath, ['log', '-1', '--format=%H|%s|%an|%cr']);
         const [hash, message, author, date] = logRes.stdout.trim().split('|');
         if (hash) {
           lastCommit = { hash: hash.substring(0, 7), message, author, date };
@@ -76,7 +77,7 @@ export function registerGitIPC() {
       }
 
       // Get branches
-      const branchListRes = await runGit(workspacePath, 'branch --list');
+      const branchListRes = await runGit(workspacePath, ['branch', '--list']);
       const branches = branchListRes.stdout
         .split('\n')
         .filter(Boolean)
@@ -117,7 +118,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:branches', async (_, workspacePath: string) => {
     try {
-      const res = await runGit(workspacePath, 'branch -a');
+      const res = await runGit(workspacePath, ['branch', '-a']);
       const branches = res.stdout
         .split('\n')
         .filter(Boolean)
@@ -134,7 +135,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:stage', async (_, workspacePath: string, filePath: string) => {
     try {
-      await runGit(workspacePath, `add "${filePath}"`);
+      await runGit(workspacePath, ['add', '--', filePath]);
       return { success: true };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -143,7 +144,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:unstage', async (_, workspacePath: string, filePath: string) => {
     try {
-      await runGit(workspacePath, `restore --staged "${filePath}"`);
+      await runGit(workspacePath, ['restore', '--staged', '--', filePath]);
       return { success: true };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -152,7 +153,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:stageAll', async (_, workspacePath: string) => {
     try {
-      await runGit(workspacePath, 'add -A');
+      await runGit(workspacePath, ['add', '-A']);
       return { success: true };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -161,7 +162,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:unstageAll', async (_, workspacePath: string) => {
     try {
-      await runGit(workspacePath, 'restore --staged .');
+      await runGit(workspacePath, ['restore', '--staged', '.']);
       return { success: true };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -170,8 +171,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:commit', async (_, workspacePath: string, message: string) => {
     try {
-      const escaped = message.replace(/"/g, '\\"');
-      const res = await runGit(workspacePath, `commit -m "${escaped}"`);
+      const res = await runGit(workspacePath, ['commit', '-m', message]);
       return { success: true, output: res.stdout };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -180,7 +180,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:push', async (_, workspacePath: string) => {
     try {
-      const res = await runGit(workspacePath, 'push');
+      const res = await runGit(workspacePath, ['push']);
       return { success: true, output: res.stdout || res.stderr };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -189,7 +189,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:pull', async (_, workspacePath: string) => {
     try {
-      const res = await runGit(workspacePath, 'pull');
+      const res = await runGit(workspacePath, ['pull']);
       return { success: true, output: res.stdout || res.stderr };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -198,7 +198,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:fetch', async (_, workspacePath: string) => {
     try {
-      const res = await runGit(workspacePath, 'fetch');
+      const res = await runGit(workspacePath, ['fetch']);
       return { success: true, output: res.stdout || res.stderr };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -207,8 +207,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:diff', async (_, workspacePath: string, filePath?: string) => {
     try {
-      const fileArg = filePath ? `"${filePath}"` : '';
-      const diffRes = await runGit(workspacePath, `diff HEAD ${fileArg}`);
+      const diffRes = await runGit(workspacePath, filePath ? ['diff', 'HEAD', '--', filePath] : ['diff', 'HEAD']);
       return { success: true, diff: diffRes.stdout };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -217,7 +216,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:log', async (_, workspacePath: string, limit = 20) => {
     try {
-      const logRes = await runGit(workspacePath, `log -n ${limit} --pretty=format:"%H|%an|%ar|%s"`);
+      const logRes = await runGit(workspacePath, ['log', '-n', String(Number(limit) || 20), '--pretty=format:%H|%an|%ar|%s']);
       const commits = logRes.stdout
         .split('\n')
         .filter(Boolean)
@@ -233,7 +232,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:checkout', async (_, workspacePath: string, branchName: string) => {
     try {
-      const res = await runGit(workspacePath, `checkout "${branchName}"`);
+      const res = await runGit(workspacePath, ['checkout', branchName]);
       return { success: true, output: res.stdout || res.stderr };
     } catch (err: any) {
       return { success: false, error: err.message };
@@ -242,7 +241,7 @@ export function registerGitIPC() {
 
   ipcMain.handle('git:createBranch', async (_, workspacePath: string, branchName: string) => {
     try {
-      const res = await runGit(workspacePath, `checkout -b "${branchName}"`);
+      const res = await runGit(workspacePath, ['checkout', '-b', branchName]);
       return { success: true, output: res.stdout || res.stderr };
     } catch (err: any) {
       return { success: false, error: err.message };

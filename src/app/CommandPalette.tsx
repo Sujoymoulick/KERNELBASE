@@ -152,10 +152,10 @@ export const CommandPalette: React.FC = () => {
         </div>
 
         <div className="max-h-80 overflow-y-auto p-1 divide-y divide-[#22120b]">
-          {filtered.length === 0 ? (
+          {!Array.isArray(filtered) || filtered.length === 0 ? (
             <div className="p-4 text-center text-xs text-neutral-500">No matching commands</div>
           ) : (
-            filtered.map((cmd, idx) => {
+            (Array.isArray(filtered) ? filtered : []).map((cmd, idx) => {
               const Icon = cmd.icon;
               const isSelected = idx === selectedIndex;
               return (

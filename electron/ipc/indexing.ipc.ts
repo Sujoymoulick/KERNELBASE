@@ -27,7 +27,8 @@ export function registerIndexingIPC() {
       const results: SearchResultItem[] = [];
       const maxResults = options?.maxResults || 200;
       const flags = options?.caseSensitive ? 'g' : 'gi';
-      const regexPattern = options?.wholeWord ? `\\b${query}\\b` : query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regexPattern = options?.wholeWord ? `\\b${escaped}\\b` : escaped;
       const searchRegex = new RegExp(regexPattern, flags);
 
       const searchInDir = async (dir: string): Promise<void> => {

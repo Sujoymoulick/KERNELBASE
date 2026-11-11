@@ -59,7 +59,7 @@ const FileTreeItem: React.FC<{
           )}
           <span className="text-xs font-medium truncate">{entry.name}</span>
         </div>
-        {isOpen && entry.children && (
+        {isOpen && Array.isArray(entry.children) && (
           <div>
             {entry.children.map((child) => (
               <FileTreeItem
@@ -166,7 +166,7 @@ export const ProjectExplorer: React.FC = () => {
 
       {/* File Tree List */}
       <div className="flex-1 overflow-y-auto py-2">
-        {files.length === 0 ? (
+        {!Array.isArray(files) || files.length === 0 ? (
           <div className="p-4 text-center text-neutral-500">No files in workspace</div>
         ) : (
           files.map((entry) => (

@@ -1,11 +1,11 @@
 import { ipcMain } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import util from 'node:util';
 import { WorkspaceSettings } from '../../src/types/ide';
 
-const execAsync = util.promisify(exec);
+const execFileAsync = util.promisify(execFile);
 const SETTINGS_FILE = path.join(process.env.HOME || '', '.kernelbase-settings.json');
 
 const DEFAULT_SETTINGS: WorkspaceSettings = {
@@ -96,7 +96,7 @@ export function registerSettingsIPC() {
   ipcMain.handle('settings:getSecret', async (_, key: string) => {
     try {
       if (process.platform === 'darwin') {
-        const res = await execAsync(`security find-generic-password -s "KernelBaseIDE" -a "${key}" -w`);
+        const res = await execFileAsync('security', ['find-generic-password', '-s', 'KernelBaseIDE', '-a', key, '-w']);
         return { success: true, secret: res.stdout.trim() };
       }
       return { success: false, error: 'Keychain not supported on this platform' };
@@ -109,7 +109,7 @@ export function registerSettingsIPC() {
     try {
       if (process.platform === 'darwin') {
         // -U updates if exists
-        await execAsync(`security add-generic-password -U -s "KernelBaseIDE" -a "${key}" -w "${value}"`);
+        await execFileAsync('security', ['add-generic-password', '-U', '-s', 'KernelBaseIDE', '-a', key, '-w', value]);
         return { success: true };
       }
       return { success: false, error: 'Keychain not supported on this platform' };
@@ -121,7 +121,7 @@ export function registerSettingsIPC() {
   ipcMain.handle('settings:deleteSecret', async (_, key: string) => {
     try {
       if (process.platform === 'darwin') {
-        await execAsync(`security delete-generic-password -s "KernelBaseIDE" -a "${key}"`);
+        await execFileAsync('security', ['delete-generic-password', '-s', 'KernelBaseIDE', '-a', key]);
         return { success: true };
       }
       return { success: false, error: 'Keychain not supported on this platform' };

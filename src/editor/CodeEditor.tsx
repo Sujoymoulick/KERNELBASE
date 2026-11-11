@@ -2,9 +2,14 @@ import React, { useRef } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import { useIDE } from '../context/IDEContext';
 import { EditorTabs } from './EditorTabs';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ChevronRight, FileCode } from 'lucide-react';
 
-export const CodeEditor: React.FC = () => {
+interface CodeEditorProps {
+  onRunCode?: () => void;
+  isRunning?: boolean;
+}
+
+export const CodeEditor: React.FC<CodeEditorProps> = ({ onRunCode, isRunning }) => {
   const { tabs, activeTabId, updateTabContent, saveActiveFile, setIsCommandPaletteOpen } = useIDE();
   const editorRef = useRef<any>(null);
 
@@ -49,6 +54,12 @@ export const CodeEditor: React.FC = () => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP, () => {
       setIsCommandPaletteOpen(true);
     });
+
+    if (onRunCode) {
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR, () => {
+        onRunCode();
+      });
+    }
   };
 
   if (!activeTab) {
@@ -63,6 +74,7 @@ export const CodeEditor: React.FC = () => {
         </div>
         <div className="flex items-center space-x-2 text-[11px] text-neutral-500 font-mono">
           <span className="bg-[#1c0e09] px-2 py-1 rounded border border-[#2b140d]">⌘P Quick Open</span>
+          <span className="bg-[#1c0f0a] px-2 py-1 rounded border border-[#2b140d]">⌘R Run</span>
           <span className="bg-[#1c0e09] px-2 py-1 rounded border border-[#2b140d]">⌘⇧P Palette</span>
           <span className="bg-[#1c0e09] px-2 py-1 rounded border border-[#2b140d]">⌘J Terminal</span>
         </div>
@@ -70,16 +82,32 @@ export const CodeEditor: React.FC = () => {
     );
   }
 
+  const breadcrumbs = activeTab.path.split('/').filter(Boolean);
+
   return (
     <div className="h-full flex flex-col bg-[#120a07]">
-      <EditorTabs />
+      <EditorTabs onRunCode={onRunCode} isRunning={isRunning} />
+
+      {/* VS Code Breadcrumb Bar */}
+      <div className="h-6 bg-[#0f0805] border-b border-[#21110a] px-3 flex items-center space-x-1 text-[11px] text-neutral-500 select-none overflow-x-auto no-scrollbar font-mono">
+        <FileCode className="w-3 h-3 text-[#ff6b35] mr-1 shrink-0" />
+        {breadcrumbs.map((segment, idx) => (
+          <React.Fragment key={idx}>
+            {idx > 0 && <ChevronRight className="w-2.5 h-2.5 text-neutral-600 shrink-0" />}
+            <span className={idx === breadcrumbs.length - 1 ? 'text-neutral-300 font-medium' : 'hover:text-neutral-400 cursor-pointer'}>
+              {segment}
+            </span>
+          </React.Fragment>
+        ))}
+      </div>
+
       <div className="flex-1 w-full relative">
         <Editor
           height="100%"
           language={activeTab.language}
           value={activeTab.content}
           theme="kernelbase-dark"
-          onChange={(val) => updateTabContent(activeTab.id, val || '')}
+          onChange={(val: any) => updateTabContent(activeTab.id, val || '')}
           onMount={handleEditorDidMount}
           options={{
             fontFamily: "'JetBrains Mono', 'Fira Code', Menlo, Monaco, monospace",

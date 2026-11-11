@@ -34,18 +34,29 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'changelog', label: 'Changelog', targetSlug: 'roadmap/release-milestones' },
   ];
 
+  const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI);
+
   return (
     <header
-      className="sticky top-0 z-40 w-full border-b backdrop-blur-md transition-colors"
+      className="sticky top-0 z-40 w-full border-b backdrop-blur-md transition-colors select-none"
       style={{
         borderColor: 'var(--kb-border)',
         backgroundColor: 'color-mix(in srgb, var(--kb-surface) 95%, transparent)',
         color: 'var(--kb-text)',
-      }}
+        WebkitAppRegion: isElectron ? 'drag' : undefined,
+      } as React.CSSProperties}
     >
-      <div className="max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
+      <div
+        className={`max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4 ${
+          isElectron ? 'pl-20 sm:pl-22' : ''
+        }`}
+        style={{ WebkitAppRegion: isElectron ? 'drag' : undefined } as React.CSSProperties}
+      >
         {/* Left: Mobile / Tablet Toggles & Brand Logo */}
-        <div className="flex items-center space-x-1.5 sm:space-x-4 shrink-0">
+        <div
+          className="flex items-center space-x-1.5 sm:space-x-4 shrink-0"
+          style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        >
           {/* Mobile hamburger menu button */}
           <button
             id="mobile-menu-toggle"
@@ -102,7 +113,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Center: Top Navigation Quick Links (Desktop) */}
-        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 overflow-x-auto scrollbar-none py-1 text-xs font-medium">
+        <nav
+          className="hidden md:flex items-center space-x-1 lg:space-x-2 overflow-x-auto scrollbar-none py-1 text-xs font-medium"
+          style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        >
           {topNavItems.map((item) => {
             const isActive = activeSection.startsWith(item.id) ||
               (item.id === 'directory' && activeSection.startsWith('get-started')) ||
@@ -133,7 +147,10 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Right: Search, Theme Toggle, Three-dot Menu, GitHub, User Profile */}
-        <div className="flex items-center space-x-1.5 sm:space-x-3">
+        <div
+          className="flex items-center space-x-1.5 sm:space-x-3"
+          style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+        >
           {/* Mobile Search Icon Button (Hidden on desktop) */}
           <button
             id="mobile-header-search-btn"

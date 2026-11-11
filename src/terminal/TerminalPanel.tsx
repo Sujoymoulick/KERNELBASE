@@ -47,7 +47,14 @@ const TerminalTabInstance: React.FC<{
     term.loadAddon(webLinksAddon);
 
     term.open(containerRef.current);
-    fitAddon.fit();
+    try {
+      fitAddon.fit();
+    } catch {}
+    const timer = setTimeout(() => {
+      try {
+        fitAddon.fit();
+      } catch {}
+    }, 100);
 
     termRef.current = term;
     fitAddonRef.current = fitAddon;
@@ -66,6 +73,7 @@ const TerminalTabInstance: React.FC<{
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('resize', handleResize);
       unsub();
       term.dispose();
@@ -94,7 +102,7 @@ export const TerminalPanel: React.FC = () => {
       {/* Session tabs toolbar */}
       <div className="h-8 bg-[#150c08] border-b border-[#29140d] flex items-center justify-between px-2 select-none">
         <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar">
-          {sessions.map((sess) => {
+          {(Array.isArray(sessions) ? sessions : []).map((sess) => {
             const isActive = sess.id === activeSessionId;
             return (
               <div
@@ -135,7 +143,7 @@ export const TerminalPanel: React.FC = () => {
 
       {/* Terminal Viewport */}
       <div className="flex-1 w-full relative">
-        {sessions.map((sess) => (
+        {(Array.isArray(sessions) ? sessions : []).map((sess) => (
           <TerminalTabInstance
             key={sess.id}
             sessionId={sess.id}

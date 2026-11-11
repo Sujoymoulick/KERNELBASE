@@ -73,7 +73,8 @@ export function registerFsIPC() {
         const results: any[] = [];
 
         for (const entry of entries) {
-          if (entry.name === '.git' || entry.name === 'node_modules' || entry.name === '.DS_Store' || entry.name === 'dist') {
+          const lazy = maxDepth === 1; // Explorer loads one level at a time and shows everything
+          if (entry.name === '.DS_Store' || (!lazy && (entry.name === '.git' || entry.name === 'node_modules' || entry.name === 'dist'))) {
             continue;
           }
           const fullPath = path.join(currentDir, entry.name);
@@ -130,6 +131,15 @@ export function registerFsIPC() {
           createdAt: stat.birthtimeMs,
         },
       };
+    } catch (err: any) {
+      return { success: false, error: err.message };
+    }
+  });
+
+  ipcMain.handle('fs:trash', async (_, targetPath: string) => {
+    try {
+      await shell.trashItem(targetPath);
+      return { success: true };
     } catch (err: any) {
       return { success: false, error: err.message };
     }

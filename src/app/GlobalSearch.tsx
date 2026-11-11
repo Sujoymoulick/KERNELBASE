@@ -50,10 +50,10 @@ export const GlobalSearch: React.FC = () => {
       <div className="flex-1 overflow-y-auto p-2 divide-y divide-[#22120b]">
         {isSearching ? (
           <div className="p-4 text-center text-neutral-500">Searching workspace...</div>
-        ) : results.length === 0 ? (
+        ) : !Array.isArray(results) || results.length === 0 ? (
           <div className="p-4 text-center text-neutral-500">No search results</div>
         ) : (
-          results.map((res, idx) => {
+          (Array.isArray(results) ? results : []).map((res, idx) => {
             const fileName = res.filePath.split('/').pop() || res.filePath;
             return (
               <div

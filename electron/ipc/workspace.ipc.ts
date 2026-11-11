@@ -1,3 +1,4 @@
+import os from 'node:os';
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -6,7 +7,45 @@ import { ProjectInfo } from '../../src/types/ide';
 const RECENT_WORKSPACES_FILE = path.join(process.env.HOME || '', '.kernelbase-recents.json');
 const WORKSPACE_STATES_DIR = path.join(process.env.HOME || '', '.kernelbase-states');
 
+let activeWorkspacePath: string = process.cwd();
+
 export function registerWorkspaceIPC(mainWindow: BrowserWindow) {
+  ipcMain.handle('workspace:get', async () => {
+    try {
+      if (!isUsableWorkspace(activeWorkspacePath)) {
+        if (fs.existsSync(RECENT_WORKSPACES_FILE)) {
+          const recents = JSON.parse(await fs.promises.readFile(RECENT_WORKSPACES_FILE, 'utf-8'));
+          const firstGood = Array.isArray(recents) ? recents.find((r) => typeof r === 'string' && isUsableWorkspace(r)) : undefined;
+          if (firstGood) activeWorkspacePath = firstGood;
+        }
+      }
+    } catch {}
+
+    if (!isUsableWorkspace(activeWorkspacePath)) {
+      activeWorkspacePath = await ensureStarterWorkspace();
+    }
+
+    const projectInfo = await detectProjectMetadata(activeWorkspacePath);
+    return {
+      rootPath: activeWorkspacePath,
+      name: path.basename(activeWorkspacePath) || 'Kernel Base Workspace',
+      projectType: projectInfo?.framework || 'node',
+      projectInfo,
+    };
+  });
+
+  ipcMain.handle('workspace:set', async (_, newPath: string) => {
+    if (isUsableWorkspace(newPath)) activeWorkspacePath = path.resolve(newPath);
+    newPath = activeWorkspacePath;
+    await saveRecentWorkspace(newPath);
+    const projectInfo = await detectProjectMetadata(newPath);
+    return {
+      rootPath: newPath,
+      name: path.basename(newPath) || 'Kernel Base Workspace',
+      projectType: projectInfo?.framework || 'generic',
+      projectInfo,
+    };
+  });
   ipcMain.handle('workspace:selectFolder', async () => {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ['openDirectory', 'createDirectory'],
@@ -176,4 +215,42 @@ async function detectProjectMetadata(dirPath: string): Promise<ProjectInfo> {
     testFramework,
     isGit,
   };
+}
+
+
+/** Absolute, existing directory that is not the filesystem root. */
+function isUsableWorkspace(p: string): boolean {
+  try {
+    return path.isAbsolute(p) && path.resolve(p) !== '/' && fs.statSync(p).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+/** First launch (e.g. from Finder, where cwd is "/"): create a small starter project. */
+async function ensureStarterWorkspace(): Promise<string> {
+  const dir = path.join(os.homedir(), 'KernelBase', 'Welcome');
+  const files: Record<string, string> = {
+    'README.md': [
+      '# Welcome to Kernel Base',
+      '',
+      '- Open a project: File > Open Folder (⌘O).',
+      '- Run the open file: ⌘R (Python, C, C++, JavaScript, TypeScript, Go, Rust, Java when installed).',
+      '- Agent Studio (right panel, ⌘⇧L): launch parallel AI agents on your own Antigravity (`agy`) or Gemini CLI login.',
+      '',
+    ].join('\n'),
+    'hello.py': 'name = "Kernel Base"\nfor i in range(3):\n    print(f"Hello from {name} #{i + 1}")\n',
+    'hello.c': '#include <stdio.h>\n\nint main(void) {\n  printf("Hello from Kernel Base (C)\\n");\n  return 0;\n}\n',
+    'hello.js': 'const langs = ["C", "Python", "JavaScript"];\nconsole.log(`Kernel Base runs: ${langs.join(", ")}`);\n',
+  };
+  try {
+    await fs.promises.mkdir(dir, { recursive: true });
+    for (const [name, body] of Object.entries(files)) {
+      const p = path.join(dir, name);
+      if (!fs.existsSync(p)) await fs.promises.writeFile(p, body, 'utf-8');
+    }
+    return dir;
+  } catch {
+    return os.homedir();
+  }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleIdentifier</key>
+  <string>com.kernelbase.ide.listen</string>
+  <key>CFBundleName</key>
+  <string>Kernel Base Voice</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Kernel listens when you turn on voice so you can talk to your coding agent.</string>
+  <key>NSSpeechRecognitionUsageDescription</key>
+  <string>Kernel turns your speech into text on this Mac so the agent can act on it.</string>
+</dict>
+</plist>

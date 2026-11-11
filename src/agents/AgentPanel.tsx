@@ -78,7 +78,7 @@ export const AgentPanel: React.FC = () => {
             Active Swarm
           </span>
           <div className="grid grid-cols-2 gap-1.5">
-            {agents.map((agent) => {
+            {(Array.isArray(agents) ? agents : []).map((agent) => {
               const theme = ROLE_COLORS[agent.role] || { border: 'border-neutral-700', bg: 'bg-neutral-900', text: 'text-neutral-300' };
               return (
                 <div
@@ -109,7 +109,7 @@ export const AgentPanel: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              {currentPlan.steps.map((step, idx) => {
+              {(Array.isArray(currentPlan?.steps) ? currentPlan.steps : []).map((step, idx) => {
                 const isCompleted = step.status === 'completed';
                 const isInProgress = step.status === 'in_progress';
                 const isPending = step.status === 'pending';

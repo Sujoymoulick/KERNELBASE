@@ -20,6 +20,7 @@ function sitemapPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [react(), tailwindcss(), sitemapPlugin()],
     resolve: {
       alias: {

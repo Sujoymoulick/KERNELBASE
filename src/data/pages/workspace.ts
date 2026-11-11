@@ -286,16 +286,16 @@ export const workspacePages: DocPage[] = [
             {
               filename: 'github-pr-body.md',
               language: 'markdown',
-              code: `## 🤖 Kernel Base Multi-Agent Run Summary: #108
+              code: `## Kernel Base Multi-Agent Run Summary: #108
 **Goal:** Implement Webhook Retry with Idempotency Keys
-**Status:** ✅ 100% Tests Passing | 🛡️ 0 Security Vulnerabilities | ⚡ Duration: 38.4s
+**Status:** 100% Tests Passing | 0 Security Vulnerabilities | Duration: 38.4s
 
-### 📋 Key Changes
+### Key Changes
 - Created \`src/services/webhookRetry.ts\` with exponential backoff & jitter
 - Added Redis idempotency locking in \`src/middleware/idempotency.ts\`
 - Added 12 unit & integration tests in \`tests/webhookRetry.test.ts\`
 
-### 🧪 Verification Summary
+### Verification Summary
 - **Vitest:** 12/12 passing (142ms)
 - **Security:** TruffleHog (0 secrets), Bandit (Clean AST)
 - **Models Used:** Qwen 2.5 Coder 14B (Local) + DeepSeek R1 8B (Local)

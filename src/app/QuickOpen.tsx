@@ -79,10 +79,10 @@ export const QuickOpen: React.FC = () => {
         </div>
 
         <div className="max-h-80 overflow-y-auto p-1 divide-y divide-[#22120b]">
-          {results.length === 0 ? (
+          {!Array.isArray(results) || results.length === 0 ? (
             <div className="p-4 text-center text-xs text-neutral-500">No files found</div>
           ) : (
-            results.map((filePath, idx) => {
+            (Array.isArray(results) ? results : []).map((filePath, idx) => {
               const fileName = filePath.split('/').pop() || filePath;
               const relDir = filePath.replace(workspace?.rootPath || '', '').replace('/' + fileName, '');
               const isSelected = idx === selectedIndex;
